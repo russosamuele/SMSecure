@@ -35,9 +35,40 @@
 
     \subsection{Obiettivi}
 
-    
+        Il mio progetto di FIA, prima esperienza personale in questo ambito, si propone di sviluppare un filtro anti-spam per migliorare l'esperienza degli utenti nel gestire i propri SMS. Ho deciso tale tematica perchè relativamente semplice, e di conseguenza in grado di farmi apprendere le basi del ML.
+
+        Gli obiettivi principali includono:
+        \begin{itemize}
+            \item l'analisi approfondita di grandi quantità di SMS        estrapolati da un dataset.
+            \item l'identificazione di feature associate ai               messaggi indesiderati.
+            \item l'implementazione di un modello di apprendimento in grado di classificare in modo affidabile messagi spam e legittimi.
+        \end{itemize}
+
+    \subsection{Specifica PEAS}
+        \begin{itemize}
+            \item Performance (misure di prestazione adottate per valutare l’operato di un agente), nel mio caso verrà valutata la precisione di classificazione, ovvero il rapporto tra il numero di messaggi spam correttamente identificati e il totale dei messaggi classificati. Inoltre, sarà anche considerato il tasso di falsi positivi, ovvero messaggi legittimi che vengono erroneamente etichettati come spam.
+            \item Environment (elementi che formano l’ambiente), nel mio caso sarà costituito dal flusso di messaggi ricevuti. 'vedi specifiche in 1.3'
+            \item Actuators (attuatori disponibili all’agente per intraprendere le azioni), nel mio caso sarà la capacità del sistema di etichettare i messaggi in arrivo come spam o non spam.
+            \item Sensors (sensori attraverso i quali l'agente riceve gli input percettivi), nel mio caso l'agente va ad acquisire i dati utili per classificare un messaggio, incluso il contenuto del messaggio, ma anche eventuali feature costruite (numero di parole ecc.)
+        \end{itemize}
+
+        \subsection{Caratteristiche dell'ambiente}
+            L'ambiente è:
+            \begin{itemize}
+                \item Parzialmente osservabile, in quanto non si ha accesso alle informazioni del mittente.
+                \item Stocastico, infatti i messaggi inviati dagli utenti sono influenzati da fattori non prevedibili.
+                \item Singolo agente, in quanto c'è un solo questo filtro anti-spam in un client di messaggistica.
+                \item Dinamico, difatti potrebbero venire a crearsi nuovi schemi di messaggi spam.
+                \item Discreto, in quanto non sono presenti variabili continue (difatti una variabile continua potrebbe essere la frequenza di invio di un determinato mittente, ma io non ho trovato tale informazioni).
+                \item Sequenziale, difatti il filtro anti-spam verrà pienamente influenzato dalle esperienze passate, per andare a prendere delle decisioni.
+            \end{itemize}
+
+        \newpage
+        \subsection{Analisi del problema}
+            Questo semplice progetto mira quindi a costruire un filtro anti-spam sms, si tratta quindi di un problema di Machine Learning. Nelle successive sezioni vado a descrivere tutte le problematiche che ho affrontato: dalla scelta dei dati all'export del modello.
 
 
+    \newpage
 
 
 
