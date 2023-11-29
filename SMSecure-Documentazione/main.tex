@@ -129,16 +129,65 @@
         \item gli sms spam hanno in media un numero di caratteri maggiore
         \item gli sms spam hanno in media un numero di parole maggiore
         \item il numero di frasi è invece molto molto simile
-    \end{itemize}
+        \end{itemize}
 
-     Infine, per calcolare la correlazione tra le variabili, possiamo usare un'ulteriore strumento: la heatmap, una mappa che utilizza colori per visualizzare i valori dei coefficienti di correlazione tra le diverse coppie di variabili nel dataset, consentendo di individuare facilmente relazioni tra di esse. Le celle più scure o più chiare indicano correlazioni più forti o più deboli, rispettivamente. Le variabili sono fortemente correlate tra loro se hanno valori vicini a 1 o -1, mentre hanno una bassa correlazione se hanno valori vicini a 0.
+        Infine, per calcolare la correlazione tra le variabili, possiamo usare un'ulteriore strumento: la heatmap, una mappa che utilizza colori per visualizzare i valori dei coefficienti di correlazione tra le diverse coppie di variabili nel dataset, consentendo di individuare facilmente relazioni tra di esse. Le celle più scure o più chiare indicano correlazioni più forti o più deboli, rispettivamente. Le variabili sono fortemente correlate tra loro se hanno valori vicini a 1 o -1, mentre hanno una bassa correlazione se hanno valori vicini a 0.
 
-     \begin{figure}[H]
+        \begin{figure}[H]
             \centering
-            \includegraphics[width=1\linewidth]{images/matrice_corr.png}
+            \includegraphics[width=0.7\linewidth]{images/matrice_corr.png}
             \caption{HeatMap}
             \label{fig:enter-label}
-    \end{figure}
+        \end{figure}
 
-    E qui possiamo finalmente visualizzare l'effettiva correlazione tra le variabili. Si può notare con estrema facilità l'altissima correlazione tra il numero di caratteri e il numero di parole, cosa che è un pò meno marcata con il numero di frasi.\\
-   Un'altra cosa davvero molto interessante è andare a visualizzare quali paroli sono più o meno frequenti nelle rispettive categoria di messaggi.
+        E qui possiamo finalmente visualizzare l'effettiva correlazione tra le variabili. Si può notare con estrema facilità l'altissima correlazione tra il numero di caratteri e il numero di parole, cosa che è un pò meno marcata con il numero di frasi.\\
+        Un'altra cosa davvero molto interessante è andare a visualizzare quali paroli sono più o meno frequenti nelle rispettive categoria di messaggi. Per fare ciò ho utilizzato la libreria wordCloud che permette di andare a generare una rappresentazione grafica semplice ed intuitiva. Ecco i due grafici realizzati:
+
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.7\linewidth]{images/wordCloudSpam.jpg}
+            \caption{parole più frequenti (quelle di sinistra si riferiscono ai SPAM, quelle di destra agli HAM)}
+            \label{fig:enter-label}
+        \end{figure}
+
+        Dai grafici emerge che le parole molto diffuse nei messaggi spam sono "free", "call", "text" e tantissime molte altre parole che difatti sono utilizzatissime nei messaggi spam, per  andare a fare pubblicità a servizi o tanto altro. Nel grafico di destra invece si possono osservare le parole più frequenti riscontrate nei messaggi ham, e come si può notare sono parole di utilizzo comune nei messaggi, ad esempio c'è anche la parola "ok".
+
+    \subsection{Analisi della qualità dei dati}
+        In questa fase vado ad analizzare i problemi di qualità dei dati rilevati durante la fase di esplorazione. A partire dai primi grafici usati nell'esplorazione si può notare che la quantità di messaggi ham, è molto maggiore rispetto alla quantità di messaggi spam.
+        Difatti, andando ad approfondire, è risultata la presenza di:
+        \begin{itemize}
+            \item 4516 sms ham
+            \item 653 sms spam
+        \end{itemize}
+        , graficamente:
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.5\linewidth]{images/sbilanciamento.png}
+            \caption{percentuali di frequenza delle classi}
+            \label{fig:enter-label}
+        \end{figure}
+        Questo indica un forte sbilanciamento dei dati, ed è quindi un problema che dovrà essere risolto. \\
+        Altri problemi riscontrati:
+        \begin{itemize}
+            \item la presenza di 403 messaggi duplicati
+            \item due colonne del dataset totalmente nulle
+            \item nomi delle colonne non rappresentativi
+        \end{itemize}
+        Tali problemi saranno risolti nella sezione successiva, ovvero nella \textbf{Data Preparation}.
+
+    \newpage
+    \section{Data Preparation}
+
+
+
+
+
+
+
+
+
+
+%\bibliographystyle{alpha}%
+%\bibliography{sample}%
+
+\end{document}
