@@ -177,6 +177,95 @@
 
     \newpage
     \section{Data Preparation}
+        Tale fase mira a rendere i dati adatti per l'utilizzo nelle fasi successive del processo. Questo processo include più punti:
+        \begin{itemize}
+            \item data cleaning
+            \item feature scaling
+            \item feature selection
+            \item data balancing
+        \end{itemize}
+         Quindi l'output di questa fase sarà un insieme di dati di input, che saranno utilizzati durante la modellazione dell'algoritmo di ML.
+    \subsection{Data Cleaning}
+        In questa fase sostanzialmente vanno corretti alcuni dei problemi individuati in fase di Data understanding: valori nulli e duplicati; per poi passare alla trasformazione dei dati in modo da poter essere utilizzati e "dati in pasto" ad un algortimo di ML.\\
+        Quindi, innanzitutto, ho eliminato completamente due colonne dal dataset poiché erano completamente vuote. Successivamente, ho rimosso 403 valori duplicati. Inoltre, ho rinominato le colonne come "target" e "text" in quanto i nomi precedenti ("v1", "v2") erano ambigui e poco rappresentativi. Successivamente, ho proceduto sostituendo le variabili target "spam" e "ham" rispettivamente con 1 e 0. Ho adottato questa procedura per garantire la compatibilità con gli algoritmi di classificazione binaria.
+
+        Avendo a che fare con del testo, il "mining", ovvero l'estrazione di semantica dai testi è leggermente complicata e va adattata al contesto. I maggiori problemi da affrontare riguardano il fatto che nel linguaggio naturale son presenti più modi per esprimere stessi concetti, possono esserci errori grammaticali; o più in generale l'estrazione delle informazioni viene difficile. Nel mio caso trattandosi di testo di SMS, ho deciso di attuare le seguenti trasformazioni:
+        \begin{itemize}
+            \item Tokenizzato in parole
+            \item Portato tutto le parole in minuscolo
+            \item Rimosso i caratteri non alfanumerici
+            \item Rimosso le stopwords
+            \item Stemming delle parole
+        \end{itemize}
+        Tutti queste trasformazioni da effettuare hanno scopi ben precisi; infatti la \textbf{tokenizzazione} aiuta a trattare le parole individualmente durante l'analisi;
+        \textbf{portare tutto in minuscolo} aiuta ad eliminare la distinzione tra maiuscole e minuscole, garantendo coerenza nell'analisi; la \textbf{rimozione caratteri non alfanumerici}va ad eliminare simboli e punteggiatura concentrando l'attenzione sulle informazioni sostanziali delle parole; la \textbf{rimozione delle stopwords}che sono parole comuni che spesso non contribuiscono significativamente al significato aiuta a ridurre il rumore nei dati; ed infine lo \textbf{stemming} che riduce le parole alle loro radici (stems) fa in modo che parole simili siano rappresentate in modo uniforme, semplificando l'analisi.
+        Ho realizzato ciò usando funzioni e dizionari preesistenti, andando solamente ad accorpare il tutto in un'unica funzione.
+        \newpage
+        \begin{verbatim}
+
+            def transform_text(text):
+                text = text.lower() #tutto in minuscolo
+                text = nltk.word_tokenize(text) #tokenizzazione
+
+                #Rimozione caratteri non alfanumerici
+                y = []
+                for i in text:
+                    if i.isalnum():
+                        y.append(i)
+
+                text = y[:]
+                y.clear()
+
+                # Rimozione stopwords
+                for i in text:
+                    if i not in stopwords.words('english') and i not in string.punctuation:
+                        y.append(i)
+
+                text = y[:]
+                y.clear()
+
+                #stemming (ps è l'oggetto portStemmer)
+                for i in text:
+                    y.append(ps.stem(i))
+
+                #Restituisce il testo pre-elaborato come una stringa di parole separate tra spazi.
+                return " ".join(y)
+
+        \end{verbatim}
+        Quindi dopo aver definito tale funzione, ho semplicemente processato tutto il testo degli SMS per poi inserirlo in una nuova colonna del dataset.
+
+    \subsection{Feature Scaling}
+        In questa fase si vanno ad utilizzare delle tecniche per normalizzare o scalare i valori delle caratteristiche in modo da avere una scala uniforme. Questo serve per evitare che caratteristiche con scale molto diverse influenzino negativamente gli algoritmi di apprendimento. Nel mio caso ho notato che le scale fra il numero di caratteri, numero di parole e numero di frasi sono molto differenti; difatti i caratteri arrivano anche a oltre 180, il numero di parole non supera nella maggiorparte dei casi 50, ed infine il numero frasi non supera le 10. Quindi ho ritenuto opportuno andare a normalizzare tali valori, e per farlo ho usato una funzione della libreria sklearn.
+        \begin{verbatim}
+            #colonne che voglio normalizzare
+            features_to_normalize = ['num_characters', 'num_words', 'num_sentences']
+
+            #oggetto che permette la normalizzazione
+            scaler = MinMaxScaler()
+
+            df[features_to_normalize] = scaler.fit_transform(df[features_to_normalize])
+        \end{verbatim}
+
+        \subsection{Feature Selection}
+            La feature selection è il processo in cui si va a scegliere un sottoinsieme delle caratteristiche più rilevanti dai dati originali per andare a ridurre la complessità del modello e si conseguenza migliorare le prestazioni. Per far ciò si utilizza anche il Feature Engineering ovvero il processo nel quale il progettista utilizza la propria conoscenza del dominio per determinare le feature e dare più o meno enfasi ad esse. Nel mio caso, osservando i valori dopo, o comunque prima della fase di Feature Scaling, ho notato che: il numero di frasi dei messaggi è una feature a bassa varianza (i suoi valori variano poco) quindi con questa è una feature non rilevante per la classificazione; di conseguenza ho deciso di eliminarla per ridurre la complessità generale. In questa fase si vanno anche ad effettuare altre operazioni, come ad esempio la feature construction, in cui il progettista va a costruire nuovi feature a partire dai dati. Io già in precedenza ho costruito, partendo dal testo, il numero di frasi, di parole e di caratteri per ogni messaggio.
+
+        \subsection{Data Balancing}
+            Il Data Balancing sono un insieme di tecniche per andare a convertire un dataset sbilanciato, ovvero con una distribuzione sbilanciata delle classi nei dati, in un dataset bilanciato. Difatti avere un dataset sbilanciato può portare a diversi problemi, tra questi previsioni sbilanciate e innaccurate, nonchè overfitting.
+            Le tecniche applicabili sono due:
+            \begin{itemize}
+                \item Undersampling
+                \item Oversampling
+            \end{itemize}
+            con la presenza di varianti che includono il clustering, per evitare alcuni inconvenienti, come ad esempio andare ad eliminare righe molto utili per l'apprendimento. In generale, in base alla propria situazione sarà, piò o meno adatta una precisa tecnica.
+            Nel mio caso, il dataset è fortemente sbilanciato, con una presenza maggiore di istanze della classe ham. Quindi le possibilità erano due:
+            \begin{itemize}
+                \item Eliminare istanze della classe ham
+                \item Aumentare le istanze della classe spam
+            \end{itemize}
+            Tra le due, per evitare duplicazione di entry e quindi overfitting, ho deciso di optare per la prima opzione, andando però a considerare l'uso dell' \textbf{undersampling con clustering}, per evitare di eliminare istanze rilevanti per l'apprendimento.
+
+
+
 
 
 
