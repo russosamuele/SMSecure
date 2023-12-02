@@ -70,7 +70,7 @@
             \begin{itemize}
                 \item Python (in dettaglio le librerie per ML, come sickitLearn, Pandas,  ecc.),
                 \item JupyterNotebook all'interno dell'IDE PyCharm
-                \item GitHub per il versionamento
+                \item GitHub per il versionamento,  \href{https://github.com/russosamuele/SMSecure.git}{link}
                 \item Per quanto riguarda documentazione e presentazione overleaf (editor latex) e powerpoint rispettivamente.
             \end{itemize}
 \newpage
@@ -263,6 +263,149 @@
                 \item Aumentare le istanze della classe spam
             \end{itemize}
             Tra le due, per evitare duplicazione di entry e quindi overfitting, ho deciso di optare per la prima opzione, andando però a considerare l'uso dell' \textbf{undersampling con clustering}, per evitare di eliminare istanze rilevanti per l'apprendimento.
+
+            //da finire dopo la lezione sul clustering
+
+        \subsection{Rappresentazione Numerica dei Dati Testuali}
+            Prima di procedere con la fase di modeling, è necessaria un'ultima trasformazione dei dati. La ragione di questa operazione risiede nel fatto che la maggior parte degli algoritmi di ML richiede dati in formato numerico come input. Inoltre, cosa non meno importante, è necessario andare a dividere l'insieme dei dati in Train set e Test set.\\
+            Usando il TfidfVectorizer ho trasformato i dati testuali in una rappresentazione numerica, successivamente ho combinato ciò con le feature già numeriche (numero parole, numero caratteri), per poi procedere, nella sezione successiva, allo split del dataset.
+            \begin{verbatim}
+                #estraggo le feature testuali
+                text_feature = 'transformed_text'
+
+                tfidf = TfidfVectorizer(max_features=3000)
+
+                #trasformo le feature
+                text_vectorizer = tfidf.fit_transform(df[text_feature])
+
+                #estraggo le feature non testuali
+                other_features = df.drop(['transformed_text', 'target'], axis=1)
+
+                #combino le due tipologie di feature
+                X_combined = hstack([text_vectorizer, csr_matrix(other_features)])
+            \end{verbatim}
+
+        \subsection{Split del Dataset}
+            Come ribadito precedentemente, prima di passare alla fase di modeling c'è bisogno di andare a dividire il dataset in due sottoinsiemi: uno per l'addestramento ed uno per il testing. Difatti andare ad addestrare e testare un modello sugli stessi dati porta ad avere risultati totalmente inaﬃdabili.\\
+            Per fare ciò, mi sono affidato alla libreria sickitLearn, usando il train test split (tale codice è eseguito in successione a quello della sezione precedente).
+            \begin{verbatim}
+                #estraggo i valori della variabile target
+                y = df['target'].values
+
+                #effettuo lo split
+                X_train, X_test, y_train, y_test =
+                train_test_split(X_combined, y, test_size=0.25,random_state=2)
+            \end{verbatim}
+            A questo punto i dati sono pronti per essere dati in input ad un modello di ML, quindi procedo alla fase di modeling.
+
+        \newpage
+        \section{Data Modeling}
+            Nella sezione precedente abbiamo preparato i dati, quindi ora può iniziare la fase di modellazione. Inizialmente va quindi selezionato l’algoritmo da
+            utilizzare per poi passare alla fase di addestramento, dove si addestra il modello e si descrivono i risultati ottenuti.
+
+            \subsection{Scelta dell'algoritmo}
+                Si tratta di un problema di apprendimento supervisionato, e più nel dettaglio di un problema di classificazione. Questo perchè, innanzitutto verrà fornito all'algoritmo un insieme di dati con rispettivo valore della variabile target, inoltre tale variabile potrà assumere un numero discreto di valori, nel mio caso solamente 2: 0 per "ham" e 1 per "spam". Quindi i possibili algoritmi utilizzabili erano i seguenti: Regressione Logistica, Support Vector Machines, K-Nearest Neighbors, Random Forest, Naive Bayes e gli Alberi Decisionali (DTC).\\
+                Tuttavia ho concentrato la mia scelta solo sui due algortimi visti a lezione, ovvero:
+                \begin{itemize}
+                    \item Naive Bayes
+                    \item Alberi Decisionali (DTC)
+                \end{itemize}
+                ,due algoritmi che operano in maniera differente per arrivare alla classificazione: infatti il primo considera le caratteristiche della nuova istanza da classificare e calcola la probabilità che queste facciano parte di una classe tramite l’applicazione del teorema di Bayes, mentre il secondo mira a creare un albero i cui nodi rappresentano un sotto-insieme di caratteristiche del problema e i cui archi rappresentano delle decisioni; il tutto sfruttando i concetti di Entropia e Information-Gain utili per andare a suddividere l'insieme di partenza.\\
+                In linea generale, gli Alberi Decisionali sono noti per la loro flessibilità nel catturare relazioni complesse nei dati, mentre il classificatore Naive Bayes eccelle per la sua velocità di addestramento, efficacia nei dati testuali e performance quando le caratteristiche sono approssimativamente indipendenti. Poiché non sono un esperto di tali algoritmi e non posso prevedere quale si adatti meglio al problema, ho scelto di adottare un approccio di valutazione empirica. Questo implica l'addestramento del modello prima con un Naive Bayes e successivamente con un Decision Tree, per poi valutare e confrontare i risultati ottenuti. Così facendo andrò a determinare quale algoritmo si comporta meglio rispetto ai miei obiettivi.
+
+            \subsection{Addestramento}
+                In tale sezione quindi si addestra il modello in base all'algoritmo scelto in precedenza. Nel mio caso procedo prima ad addestrare il modello usando Naive Bayes, poi farò lo stesso con Decision Tree, ed infine valuterò le prestazioni ottenute per entrambi. Ciò mi consentirà di capire quale dei due algoritmi si adatta meglio ai miei dati, e va a fare delle predizioni più accurate.\\
+
+                \subsubsection{Naive Bayes}
+                    L'algoritmo Naive Bayes è un algoritmo di classificazione basato sul teorema di Bayes, che riguarda la probabilità condizionata. Si parla di  "naive" perchè tale algortimo considera l'indipendenza tra le caratteristiche, ciò semplifica i calcoli e rende l'algoritmo veloce. Ci sono diverse varianti del Naive Bayes, tra cui:
+                    \begin{itemize}
+                        \item Multinomial Naive Bayes (MNB)
+                        \item  Gaussian Naive Bayes (GNB)
+                        \item Bernoulli Naive Bayes (BNB)
+                    \end{itemize}
+                    che differiscono nelle loro ipotesi sulla distribuzione delle caratteristiche. Ad esempio l'MNB è particolarmente utile per problemi di classificazione di testi, il GNB per dati continui, ed infine il BNB per dati binari, trattando le caratteristiche come presenza o assenza di attributi. Anche qui ho adottato la valutazione empirica, andandoli a provare tutti! \\
+                    Queste sono le matrici di confusione che ho ottenuto:
+                    \begin{figure}[H]
+                        \centering
+                        \includegraphics[width=1.1\linewidth]{images/NaiveBayesResult.jpg}
+                        \caption{Risultati BNB, GNB, MNB. Rispettivamente in questo ordine}
+                        \label{fig:enter-label}
+                    \end{figure}
+                    Poi a partire dalle matrici di confusione, che esprimono al loro interno il numero di True Positive (riquadro in alto a sinistra), True Negative (riquadro in basso a destra), False Positive (riquadro in alto a destra), False Negative (riquadro in basso a sinistra) sono andato anche a calcolare delle metriche di valutazione, più nello specifico Precisione, Recall e Accuratezza; le quali formule si basano proprio sugli indicatori espressi da tali matrici. Il mio obiettivo è andare a massimizzare tutte e tre le metriche: che esprimono rispettivamente il numero di predizioni corrette per la classe ‘true’ rispetto a tutte le predizioni fatte, il numero di predizioni corrette per la classe ‘true’ rispetto a tutte le istanze positive di quella classe, ed infine il numero totale di predizioni corrette sia della classe positiva che negativa.\\
+                    Risultati ottenuti:
+                    \begin{figure}[H]
+                        \centering
+                        \includegraphics[width=1\linewidth]{images/resultTableNaiveBayes.png}
+                        \label{fig:enter-label}
+                    \end{figure}
+                    Andiamo a fare un'analisi dei risultati ottenuti, ma prima vediamo cosa esprimono nel mio caso tali indicatori.
+                    \begin{itemize}
+                        \item La \textbf{Recall} rappresenta la proporzione di messaggi spam che sono stati correttamente identificati rispetto al totale dei messaggi spam effettivi. Un valore elevato indica che il modello è in grado di individuare la maggior parte dei messaggi spam.
+                        \item La \textbf{Precisione} rappresenta la proporzione di messaggi classificati come spam che sono effettivamente spam. Un valore elevato indica che il modello ha pochi falsi positivi, cioè pochi messaggi ham erroneamente classificati come spam.
+                        \item L'\textbf{accuratezza} rappresenta la proporzione di tutte le previsioni corrette (veri positivi e veri negativi) rispetto a tutte le previsioni fatte dal modello. Tale indicatore, come visto a lezione, può essere influenzato dallo sbilanciamento dei dati; non è questo il caso dato che ho provveduto precedentemente a bilanciare i dati.
+                    \end{itemize}
+                    Da come emerge dai valori ottenuti, il classificatore Naive Bayes MNB ha ottenuto ottimi risultati su tutte le metriche. Una particolarità osservabile è che il Naive Bayes BNB ha ottenuto una precisione molto alta, a sfavore di una recall piuttosto bassa rispetto gli altri. Dal mio punto di vista è meglio avere una recall il più alta possibile, difatti preferirei che qualche messaggio ham venga erroneamente classificato rispetto al ricevere fastidiosi sms spam. Quindi tra i tre preliligo il classificatore MNB.
+                    Andiamo ora ad addestrare il modello usando il Decision Tree.
+
+                \subsubsection{Decision Tree}
+                    Il DTC è un classificatore che opera attraverso una struttura ad albero. Ogni nodo rappresenta un sottoinsieme delle caratteristiche, e i rami che si dipartono da ogni nodo indicano i possibili valori di quelle caratteristiche.
+                    Il processo di costruzione dell'albero inizia con la scelta della caratteristica che meglio divide il set di dati in classi omogenee, ciò viene fatto utilizzando misure come l'entropia o l'information-gain (misura quanto un attributo divide bene il dataset). Una volta individuata la caratteristica deve essere creato un nodo e  diviso il set di dati in base ai possibili valori di quella caratteristica. Ciò viene quindi ripetuto su ciascun sottoinsieme di dati, creando ulteriori nodi e rami. Questo continua fino a quando viene raggiunto un criterio di stop o comunque si arriva ad avere dei set puri, ovvero composte da istanze di un'unica classe.
+                    Ho creato un modello usando tale classificatore, e questa è la matrice di confusione ottenuta:
+                    \begin{figure}[H]
+                        \centering
+                        \includegraphics[width=0.5\linewidth]{images/dtcResult.png}
+                        \caption{Matrice confusione DTC (maxDepth=8)}
+                        \label{fig:enter-label}
+                    \end{figure}
+                    Tuttavia l'algortimo DTC ha un importante parametro: maxDepth, ovvero il numero massimo di livelli creati per l'albero. Quindi per trovare la profonditò massima ottimale ho eseguito l'algoritmo più volte, andando a variare il parametro osservando che le performance in termini di precisione/accuratezza son salite fino ad una profondità massima pari ad 8, per poi andare in stallo o addirittura peggiorare.
+
+                    \subsubsection{MNB vs DTC}
+                        Considerando una profondità massima pari ad 8, questi sono i valori ottenuti confrontati con i risultati del Naive Bayes MNB in termini di Precisione, Recall, Accuratezza.
+
+                        \begin{figure}[H]
+                            \centering
+                            \includegraphics[width=1\linewidth]{images/FinalTable.png}
+                            \caption{MNB vs DTC}
+                            \label{fig:enter-label}
+                        \end{figure}
+
+                        Tuttavia come si può notare i risultati ottenuti non sono dei migliori. Ciò probabilmente è dovuto a più fattori. In particolare potrebbe esser dovuto alla grandezza del dataset; infatti dopo il bilanciamento ho solamente 650 entry per classe, il che potrebbe non bastare per creare un buon decision tree. Un'altro fattore è dal modo di operare dei due algoritmi, difatti per sua natura il Naive Bayes MNB semplifica la complessità del problema assumendo un'indipendenza tra le varie caratteristiche. Quindi nel contesto dei messaggi ham/spam, l'algoritmo considera ad esempio la probabilità di trovare una certa parola in un messaggio, di conseguenza se una parola specifica è spesso associata ai messaggi spam nei dati di addestramento, allora il modello imparerà questa relazione e utilizzerà queste informazioni per fare predizioni su nuovi messaggi.
+                        In generale questo è un grafico che riporta i risultati ottenuti da tutti gli addestramenti svolti:
+                        \begin{figure}[H]
+                            \centering
+                            \includegraphics[width=1\linewidth]{images/AllResult.png}
+                            \label{fig:enter-label}
+                        \end{figure}
+                        Come già si è potuto capire, l'algoritmo che si è comportato meglio è stato il Naive Bayes MNB. Quindi dopo esser giunto a questa conclusione posso procedere alla fase di valutazione.
+
+        \section{Evaluation}
+            In questa fase si va a valutare se i
+            risultati sono chiari, se sono in linea con gli obiettivi e se rivelano delle prospettive aggiuntive
+            alle quali il progettista non aveva pensato, nonchè verificare la consistenza e la solidità dell’intero processo.
+            Vado quindi ad esaminare più nel dettaglio i risultati che ho ottenuto dall'algortimo migliore dopo la valutazione empirica.
+            Il Naive Bayes MNB mi ha dato i seguenti risultati:
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=1\linewidth]{images/MNBresult.png}
+                \label{fig:enter-label}
+            \end{figure}
+             Ho voluto effettuare un'altra verifica della bontà del modello attraverso la ROC-AUC curve, che visualizza il trade-off tra Recall e specificità (misura della sua capacità di identificare correttamente i casi negativi) del modello, ovvero quanto bene il modello riesce a distinguere tra messaggi ham e spam.
+             \begin{figure}[H]
+                 \centering
+                 \includegraphics[width=0.5\linewidth]{images/ROC-AUC.png}
+                 \caption{ROC-AUC curve di Naive Bayes MNB}
+                 \label{fig:enter-label}
+             \end{figure}
+             La linea diagonale rappresenta il risultato di una scelta casuale, quindi un qualunque modello utile deve essere al suo di sopra. Nel mio caso è proprio così. Inoltre un buon modello deve posizionarsi alto a sinistra, ovvero deve avere sensibilità elevata e basso tasso di falsi positivi, cioè il modello deve riuscire a classificare correttamente la maggior parte dei casi positivi senza generare falsi positivi. Anche nel mio caso è così. Ultima non meno importante la AUC (Area sotto la curva) che fornisce una misura aggregata delle prestazioni del modello, ad esempio un'area di 1 indica un modello perfetto, mentre un'area di 0.5 indica una scelta casuale. E come si può notare il mio modello ha ottenuto un valore pari a 0.99.
+             Quindi in conclusione posso considerare la costruzione del modello e in generale dell'approccio completa, ci conseguenza posso andare alla fase di Deployment.
+
+        \section{Deployment}
+
+
+
+
+
+
 
 
 
