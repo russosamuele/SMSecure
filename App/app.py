@@ -16,6 +16,7 @@ scaler = MinMaxScaler()
 if 'predictions_history' not in st.session_state:
     st.session_state.predictions_history = []
 
+
 # funzione per trasformare il testo
 def transform_text(text):
     text = text.lower()
@@ -50,42 +51,47 @@ def calculate_word_char_count(text):
 
 
 # import model and vectorizer
-tfidf = pickle.load(open('vectorizer.pkl','rb'))
-model = pickle.load(open('model.pkl','rb'))
+tfidf = pickle.load(open('vectorizer.pkl', 'rb'))
+model = pickle.load(open('model.pkl', 'rb'))
 
 st.title("SMSSecure - SMS Classifier")
 
 input_sms = st.text_area("Enter the message")
 
-if st.button('Predict', key='prediction_button', help='Click to predict'):
-    # calcolo numero words e numero caratteri
-    num_words, num_characters = calculate_word_char_count(input_sms)
+if not input_sms:
+    st.warning("Please enter a message.")
+else:
+    if st.button('Predict', key='prediction_button', help='Click to predict'):
+        # calcolo numero words e numero caratteri
+        num_words, num_characters = calculate_word_char_count(input_sms)
 
-    # Normalizzo le feature con il MinMaxScaler
-    features = [[num_words, num_characters]]
-    normalized_features = scaler.fit_transform(features)
+        # Normalizzo le feature con il MinMaxScaler
+        features = [[num_words, num_characters]]
+        normalized_features = scaler.fit_transform(features)
 
-    # trasformo il testo (stemming, riduzione a maiuscolo ecc.)
-    transformed_sms = transform_text(input_sms)
+        # trasformo il testo (stemming, riduzione a maiuscolo ecc.)
+        transformed_sms = transform_text(input_sms)
 
-    # applico il tfid sul testo trasformato per avere una rappresentazione numerica processabile dal modello
-    vector_input = tfidf.transform([transformed_sms])
+        # applico il tfid sul testo trasformato per avere una rappresentazione numerica processabile dal modello
+        vector_input = tfidf.transform([transformed_sms])
 
-    # unisco il testo già vettorizzato con le due feature normalizzate
-    final_features = hstack([vector_input[:, :2998], normalized_features])
+        # unisco il testo già vettorizzato con le due feature normalizzate
+        final_features = hstack([vector_input[:, :2998], normalized_features])
 
-    # predizione
-    result = model.predict(final_features)[0]
+        # predizione
+        result = model.predict(final_features)[0]
 
-    # stampa del risultato
-    if result == 1:
-        st.header("Spam")
-    else:
-        st.header("Ham")
+        # stampa del risultato
+        if result == 1:
+            st.header("Spam")
+        else:
+            st.header("Ham")
 
-    # Aggiungi la predizione alla lista di storico
-    st.session_state.predictions_history.append({"Message": input_sms, "Prediction": "Spam" if result == 1 else "Ham"})
+        # Aggiungi la predizione alla lista di storico
+        st.session_state.predictions_history.append({"Message": input_sms, "Prediction": "Spam" if result == 1 else "Ham"})
 
+
+st.markdown("---")
 
 # Mostra la tabella delle predizioni passate
 st.title("Predictions History")
