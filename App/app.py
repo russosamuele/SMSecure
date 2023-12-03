@@ -53,6 +53,8 @@ def calculate_word_char_count(text):
 # import model and vectorizer
 tfidf = pickle.load(open('vectorizer.pkl', 'rb'))
 model = pickle.load(open('model.pkl', 'rb'))
+spamWords = pickle.load(open('spamWords.pkl', 'rb'))
+hamWords = pickle.load(open('hamWords.pkl', 'rb'))
 
 st.title("SMSSecure - SMS Classifier")
 
@@ -72,6 +74,12 @@ else:
         # trasformo il testo (stemming, riduzione a maiuscolo ecc.)
         transformed_sms = transform_text(input_sms)
 
+        # cerco corrispondenze con parole spam
+        parole_Spamchiave_trovate = [parola for parola in spamWords if parola in transformed_sms]
+
+        # cerco corrispondenze con parole ham
+        parole_Hamchiave_trovate = [parola for parola in hamWords if parola in transformed_sms]
+
         # applico il tfid sul testo trasformato per avere una rappresentazione numerica processabile dal modello
         vector_input = tfidf.transform([transformed_sms])
 
@@ -84,8 +92,12 @@ else:
         # stampa del risultato
         if result == 1:
             st.header("Spam")
+            if parole_Spamchiave_trovate:
+                st.write("Parole chiave spam trovate:", ", ".join(parole_Spamchiave_trovate))
         else:
             st.header("Ham")
+            if parole_Hamchiave_trovate:
+                st.write("Parole chiave ham trovate:", ", ".join(parole_Hamchiave_trovate))
 
         # Aggiungi la predizione alla lista di storico
         st.session_state.predictions_history.append({"Message": input_sms, "Prediction": "Spam" if result == 1 else "Ham"})
