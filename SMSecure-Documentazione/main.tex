@@ -71,7 +71,7 @@
                 \item Python (in dettaglio le librerie per ML, come sickitLearn, Pandas,  ecc.),
                 \item JupyterNotebook all'interno dell'IDE PyCharm
                 \item GitHub per il versionamento,  \href{https://github.com/russosamuele/SMSecure.git}{link}
-                \item Per quanto riguarda documentazione e presentazione overleaf (editor latex) e powerpoint rispettivamente.
+                \item Per quanto riguarda documentazione e presentazione overleaf e Canva.
             \end{itemize}
 \newpage
 \section{Data Understanding}
@@ -262,41 +262,69 @@
                 \item Eliminare istanze della classe ham
                 \item Aumentare le istanze della classe spam
             \end{itemize}
-            Tra le due, per evitare duplicazione di entry e quindi overfitting, ho deciso di optare per la prima opzione, andando però a considerare l'uso dell' \textbf{undersampling con clustering}, per evitare di eliminare istanze rilevanti per l'apprendimento.
+            Tra le due, per evitare duplicazione di entry e quindi overfitting, ho deciso di optare per la prima opzione, andando però a considerare l'uso dell' \textbf{undersampling con clustering}, per evitare di eliminare istanze rilevanti per l'apprendimento.\\
+            Per quanto riguarda l'algoritmo di clustering da utilizzare ho optato per il k-means, l'algoritmo a partizionamento iterativo più diffuso, per la compatibilità con la forma, e la presenza di pochi outlier, che comunque ho deciso di eliminare in questo modo: ho calcolato media e deviazione standard, ed ho impostato una soglia di eliminazione pari 4.\\
+            Un parametro fondamentale per la configurazione del k-means è k, ovvero il numero di cluster da generare; quindi non sapendo in quanti cluster andare a suddividere il dataset ho optato nella valutazione di due tecniche:
+            \begin{itemize}
+                \item Il punto di gomito
+                \item Silhouette score
+            \end{itemize}
 
-            //da finire dopo la lezione sul clustering
+            \subsubsection{Elbow Point}
+                Il punto di gomito è un metodo empirico, che consiste nel graficare i valori candidati del parametro k rispetto alla somma degli errori quadratici ottenuti dall’algoritmo configurato per generare k cluster.
+                \begin{figure}[H]
+                    \centering
+                    \includegraphics[width=0.7\linewidth]{images/elbowPoint.png}
+                    \label{fig:enter-label}
+                \end{figure}
+                Come si può notare dal grafico, il numero ideale di cluster suggerito è tra 4 e 5. Ho successivamente anche provato il silhoette coefficient.
+
+            \subsubsection{Silhouette coefficient}
+                È una misura della coesione e separazione tra i dati. Più in particolare, quantifica quanto i dati siano ben disposti nei cluster generati. Il coeﬃciente si basa su quanto bene i dati sono ammassati nel cluster di riferimento; e quanto è distante ciascun campione da qualsiasi altro cluster. Il coeﬃciente varia tra -1 e +1 e valori alti indicano condizioni maggiori di coesione e di separazione dei dati.
+                \begin{figure}[H]
+                    \centering
+                    \includegraphics[width=0.6\linewidth]{images/silhouetteScores.png}
+                    \label{fig:enter-label}
+                \end{figure}
+                Anche qui ho usato una valutazione empirica, ovvero ho eseguito il k-means con diversi valori di k (2, 3, 4, 5) e ho osservato che il silhouette score fosse maggiore per k = 2.
+
+            \subsubsection{Scelta del k}
+                Quindi ho ottenuto valori discordanti dalle due metodologie usate:
+                \begin{itemize}
+                    \item Elbow Point: k=3 o k=4
+                    \item Silhouette score: k=2
+                \end{itemize}
+                Per andare quindi a decidere quale valore di k usare, ho semplicemente provato ad eseguire i passi successivi del progetto per i diversi valori di k, ovvero k=1, 2, 3; ottenendo risultati riguardo la classificazione di gran lunga maggiori per k=2.\\
+
+            \subsubsection{Clustering con k=2}
+                Una volta individuato il parametro k sono andato ad eseguire k-means.
+                \begin{figure}[H]
+                    \centering
+                    \includegraphics[width=0.9\linewidth]{images/clust.png}
+                    \caption{k-means con k=2, dopo la rimozione degli outlier}
+                    \label{fig:enter-label}
+                \end{figure}
+                con un silhouette score pari a 0.6851.
+
+            \subsubsection{Selezione campioni dai cluster}
+                A questo punto ho semplicemente selezionato 325 sample per cluster, in modo da avere un totale di 654 sms ham. In questo modo ho esattamente lo stesso numero di messaggi di ogni classe.
+                \begin{figure}[H]
+                    \centering
+                    \includegraphics[width=0.5\linewidth]{images/datasetBilanciato.png}
+                    \caption{Frequenza delle classi dopo la fase di Undersampling}
+                    \label{fig:enter-label}
+                \end{figure}
+
+
 
         \subsection{Rappresentazione Numerica dei Dati Testuali}
             Prima di procedere con la fase di modeling, è necessaria un'ultima trasformazione dei dati. La ragione di questa operazione risiede nel fatto che la maggior parte degli algoritmi di ML richiede dati in formato numerico come input. Inoltre, cosa non meno importante, è necessario andare a dividere l'insieme dei dati in Train set e Test set.\\
             Usando il TfidfVectorizer ho trasformato i dati testuali in una rappresentazione numerica, successivamente ho combinato ciò con le feature già numeriche (numero parole, numero caratteri), per poi procedere, nella sezione successiva, allo split del dataset.
-            \begin{verbatim}
-                #estraggo le feature testuali
-                text_feature = 'transformed_text'
-
-                tfidf = TfidfVectorizer(max_features=3000)
-
-                #trasformo le feature
-                text_vectorizer = tfidf.fit_transform(df[text_feature])
-
-                #estraggo le feature non testuali
-                other_features = df.drop(['transformed_text', 'target'], axis=1)
-
-                #combino le due tipologie di feature
-                X_combined = hstack([text_vectorizer, csr_matrix(other_features)])
-            \end{verbatim}
 
         \subsection{Split del Dataset}
             Come ribadito precedentemente, prima di passare alla fase di modeling c'è bisogno di andare a dividire il dataset in due sottoinsiemi: uno per l'addestramento ed uno per il testing. Difatti andare ad addestrare e testare un modello sugli stessi dati porta ad avere risultati totalmente inaﬃdabili.\\
-            Per fare ciò, mi sono affidato alla libreria sickitLearn, usando il train test split (tale codice è eseguito in successione a quello della sezione precedente).
-            \begin{verbatim}
-                #estraggo i valori della variabile target
-                y = df['target'].values
-
-                #effettuo lo split
-                X_train, X_test, y_train, y_test =
-                train_test_split(X_combined, y, test_size=0.25,random_state=2)
-            \end{verbatim}
-            A questo punto i dati sono pronti per essere dati in input ad un modello di ML, quindi procedo alla fase di modeling.
+            Per fare ciò, mi sono affidato alla libreria sickitLearn, usando il train test split.
+            Dopo aver fatto ciò i dati sono pronti per essere dati in input ad un modello di ML, quindi procedo alla fase di modeling.
 
         \newpage
         \section{Data Modeling}
@@ -317,17 +345,17 @@
                 In tale sezione quindi si addestra il modello in base all'algoritmo scelto in precedenza. Nel mio caso procedo prima ad addestrare il modello usando Naive Bayes, poi farò lo stesso con Decision Tree, ed infine valuterò le prestazioni ottenute per entrambi. Ciò mi consentirà di capire quale dei due algoritmi si adatta meglio ai miei dati, e va a fare delle predizioni più accurate.\\
 
                 \subsubsection{Naive Bayes}
-                    L'algoritmo Naive Bayes è un algoritmo di classificazione basato sul teorema di Bayes, che riguarda la probabilità condizionata. Si parla di  "naive" perchè tale algortimo considera l'indipendenza tra le caratteristiche, ciò semplifica i calcoli e rende l'algoritmo veloce. Ci sono diverse varianti del Naive Bayes, tra cui:
+                    L'algoritmo Naive Bayes \cite{wikiNaiveBayes} è un algoritmo di classificazione basato sul teorema di Bayes, che riguarda la probabilità condizionata. Si parla di  "naive" perchè tale algortimo considera l'indipendenza tra le caratteristiche, ciò semplifica i calcoli e rende l'algoritmo veloce. Ci sono diverse varianti del Naive Bayes, tra cui:
                     \begin{itemize}
                         \item Multinomial Naive Bayes (MNB)
                         \item  Gaussian Naive Bayes (GNB)
                         \item Bernoulli Naive Bayes (BNB)
                     \end{itemize}
-                    che differiscono nelle loro ipotesi sulla distribuzione delle caratteristiche. Ad esempio l'MNB è particolarmente utile per problemi di classificazione di testi, il GNB per dati continui, ed infine il BNB per dati binari, trattando le caratteristiche come presenza o assenza di attributi. Anche qui ho adottato la valutazione empirica, andandoli a provare tutti! \\
+                    che differiscono nelle loro ipotesi sulla distribuzione delle caratteristiche. La distribuzione si riferisce alla probabilità delle diverse features condizionate alle classi di output. Ad esempio l'MNB è particolarmente utile per problemi di classificazione di testi, il GNB per dati continui, ed infine il BNB per dati binari, trattando le caratteristiche come presenza o assenza di attributi. Anche qui ho adottato la valutazione empirica, andandoli a provare tutti! \\
                     Queste sono le matrici di confusione che ho ottenuto:
                     \begin{figure}[H]
                         \centering
-                        \includegraphics[width=1.1\linewidth]{images/NaiveBayesResult.jpg}
+                        \includegraphics[width=1.1\linewidth]{images/naiveBayesResults.jpg}
                         \caption{Risultati BNB, GNB, MNB. Rispettivamente in questo ordine}
                         \label{fig:enter-label}
                     \end{figure}
@@ -348,7 +376,7 @@
                     Andiamo ora ad addestrare il modello usando il Decision Tree.
 
                 \subsubsection{Decision Tree}
-                    Il DTC è un classificatore che opera attraverso una struttura ad albero. Ogni nodo rappresenta un sottoinsieme delle caratteristiche, e i rami che si dipartono da ogni nodo indicano i possibili valori di quelle caratteristiche.
+                    Il DTC \cite{wikiDTC} è un classificatore che opera attraverso una struttura ad albero. Ogni nodo rappresenta un sottoinsieme delle caratteristiche, e i rami che si dipartono da ogni nodo indicano i possibili valori di quelle caratteristiche.
                     Il processo di costruzione dell'albero inizia con la scelta della caratteristica che meglio divide il set di dati in classi omogenee, ciò viene fatto utilizzando misure come l'entropia o l'information-gain (misura quanto un attributo divide bene il dataset). Una volta individuata la caratteristica deve essere creato un nodo e  diviso il set di dati in base ai possibili valori di quella caratteristica. Ciò viene quindi ripetuto su ciascun sottoinsieme di dati, creando ulteriori nodi e rami. Questo continua fino a quando viene raggiunto un criterio di stop o comunque si arriva ad avere dei set puri, ovvero composte da istanze di un'unica classe.
                     Ho creato un modello usando tale classificatore, e questa è la matrice di confusione ottenuta:
                     \begin{figure}[H]
@@ -377,7 +405,7 @@
                             \label{fig:enter-label}
                         \end{figure}
                         Come già si è potuto capire, l'algoritmo che si è comportato meglio è stato il Naive Bayes MNB. Quindi dopo esser giunto a questa conclusione posso procedere alla fase di valutazione.
-
+        \newpage
         \section{Evaluation}
             In questa fase si va a valutare se i
             risultati sono chiari, se sono in linea con gli obiettivi e se rivelano delle prospettive aggiuntive
@@ -399,27 +427,32 @@
              La linea diagonale rappresenta il risultato di una scelta casuale, quindi un qualunque modello utile deve essere al suo di sopra. Nel mio caso è proprio così. Inoltre un buon modello deve posizionarsi alto a sinistra, ovvero deve avere sensibilità elevata e basso tasso di falsi positivi, cioè il modello deve riuscire a classificare correttamente la maggior parte dei casi positivi senza generare falsi positivi. Anche nel mio caso è così. Ultima non meno importante la AUC (Area sotto la curva) che fornisce una misura aggregata delle prestazioni del modello, ad esempio un'area di 1 indica un modello perfetto, mentre un'area di 0.5 indica una scelta casuale. E come si può notare il mio modello ha ottenuto un valore pari a 0.99.
              Quindi in conclusione posso considerare la costruzione del modello e in generale dell'approccio completa, ci conseguenza posso andare alla fase di Deployment.
 
+        \newpage
         \section{Deployment}
+            La fase di deployment rappresenta il culmine dell'intero processo di sviluppo di un modello di ML, si va quindi a trasformare il modello addestrato in una soluzione pronta per l'uso. Quindi per prima cosa ho dovuto esportare il modello precedentemente addestrato, in modo da poterlo integrare in una semplice applicazione. L'idea per questa applicazione è la seguente: una semplice text area in cui l'utente può inserire il testo del messaggio ricevuto, e premendo un apposito pulsante, verrà visualizzata la predizione del sistema. Inoltre verrà anche mantenuta la history dei messaggi, fino alla chiusura della schermata. Per realizzare ciò ho utilizzato la libreria streamlit, adatta alla creazione di web app veloci, performanti e belle.
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=0.6\linewidth]{images/app.png}
+                \caption{SMSecure app [schermata di apertura]}
+                \label{fig:enter-label}
+            \end{figure}
+            L'app inoltre, una volta che viene fatta una predizione va anche ad indicare eventuali parole individuate che frequentemente appaiono in messaggi ham o spam.
+            Per realizzare tutto ciò quindi, come già detto, ho dovuto esportare il modello addestrato, ma insieme ad esso ho esportato anche il tfidf, in modo da garantire che la rappresentazione dei dati utilizzata durante l'addestramento sia coerente con quella utilizzata durante il deployment. Per garantire appieno questa coerenza non è bastato solamente andare ad usare lo stesso vectorizer, ma ho dovuto eseguire sul messaggio inserito dall'utente tutte le operazioni che ho fatto in fase di addestramento, dalla data preparation alla trasformazione del testo in dati numerici, andando anche a ricavare dal testo il numero di parole e il numero di caratteri. Infine ho esportato dal notebook anche le frequenze delle parole più diffuse nei messaggi ham e spam, in modo da cercare eventuali corrispondenze e di conseguenza aumentare l'explainability del modello.
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=0.6\linewidth]{images/app2.png}
+                \caption{SMSecure app [explainability e history]}
+                \label{fig:enter-label}
+            \end{figure}
+
+        \newpage
+        \section{Conclusioni}
+            Concludere il mio primo progetto di ML è stata un'esperienza ricca di apprendimento personale, in cui ho potuto affrontare nuove sfide: partendo dall'approfondimento delle conoscenze in Python fino ad arrivare a librerie più specifiche. In particolare, l'utilizzo di algortimi di classificazione e la gestione di tecniche di preprocessing del testo sono state sfide interessanti e piacevoli. Per quanto riguarda invece gli obiettivi che mi ero proposto ad inizio progetto, ovvero familiarizzare con parte dei concetti visti a lezione andando a sviluppare un modello di ML non estremamente complesso, posso dire di essere soddisfatto e di aver raggiunto ciò che mi ero prefissato.
 
 
+\newpage
+\bibliographystyle{alpha}
+\bibliography{rif}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-%\bibliographystyle{alpha}%
-%\bibliography{sample}%
 
 \end{document}
