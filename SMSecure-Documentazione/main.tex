@@ -27,15 +27,15 @@
 
 \newpage
 
-
 \section{Introduzione}
 
-    L'aumento esponenziale dell'utilizzo di dispositivi mobili ha reso gli SMS uno dei principali canali di comunicazione. Tuttavia, insieme a questa crescita, si è verificato un forte incremento del numero di spam SMS; ovvero messaggi caratterizzati da contenuti promozionali non richiesti, pubblicità ingannevoli o addirittura truffe; compromettendo l'efficienza e la sicurezza delle comunicazioni personali e professionali.
+    L'aumento esponenziale dell'utilizzo di dispositivi mobili ha reso gli SMS uno dei principali canali di comunicazione. Tuttavia, insieme a questa crescita, si è verificato un forte incremento del numero di spam SMS; ovvero messaggi caratterizzati da contenuti promozionali non richiesti, pubblicità ingannevoli o addirittura truffe; compromettendo l'efficienza e la sicurezza delle comunicazioni personali e professionali.\\
+    Tutto il codice, il modello, la presentazione nonchè tale documentazione, si possono trovare presso tale repository \href{https://github.com/russosamuele/SMSecure.git}{GitHub}
 
 
     \subsection{Obiettivi}
 
-        Il mio progetto di FIA, prima esperienza personale in questo ambito, si propone di sviluppare un filtro anti-spam per migliorare l'esperienza degli utenti nel gestire i propri SMS. Ho deciso tale tematica perchè relativamente semplice, e di conseguenza in grado di farmi apprendere le basi del ML.
+        Tale progetto di Fondamenti di Intelligenza Artificiale, il mio primo approccio in questo ambito, si propone di sviluppare un filtro anti-spam sms per migliorare l'esperienza degli utenti nel gestire i propri messaggi. Ho scelto tale tematica perchè relativamente semplice, e quindi in grado di farmi apprendere il più possibile le basi del Machine Learning.
 
         Gli obiettivi principali includono:
         \begin{itemize}
@@ -46,9 +46,9 @@
 
     \subsection{Specifica PEAS}
         \begin{itemize}
-            \item Performance (misure di prestazione adottate per valutare l’operato di un agente), nel mio caso verrà valutata la precisione di classificazione, ovvero il rapporto tra il numero di messaggi spam correttamente identificati e il totale dei messaggi classificati. Inoltre, sarà anche considerato il tasso di falsi positivi, ovvero messaggi legittimi che vengono erroneamente etichettati come spam.
-            \item Environment (elementi che formano l’ambiente), nel mio caso sarà costituito dal flusso di messaggi ricevuti. 'vedi specifiche in 1.3'
-            \item Actuators (attuatori disponibili all’agente per intraprendere le azioni), nel mio caso sarà la capacità del sistema di etichettare i messaggi in arrivo come spam o non spam.
+            \item Performance (misure di prestazione adottate per valutare l’operato di un agente), nel mio caso verranno valutate la precisione di classificazione e l'accuratezza. Inoltre sarà anche considerato il tasso di falsi positivi, ovvero messaggi legittimi che vengono erroneamente etichettati come spam.
+            \item Environment (elementi che formano l’ambiente), nel mio caso sarà costituito dal flusso di messaggi ricevuti. '\textit{maggiori dettagli in sezione 1.3}'
+            \item Actuators (attuatori disponibili all’agente per intraprendere le azioni), nel mio caso sarà la capacità del sistema di etichettare i messaggi in arrivo come spam o ham.
             \item Sensors (sensori attraverso i quali l'agente riceve gli input percettivi), nel mio caso l'agente va ad acquisire i dati utili per classificare un messaggio, incluso il contenuto del messaggio, ma anche eventuali feature costruite (numero di parole ecc.)
         \end{itemize}
 
@@ -57,27 +57,26 @@
             \begin{itemize}
                 \item Parzialmente osservabile, in quanto non si ha accesso alle informazioni del mittente.
                 \item Stocastico, infatti i messaggi inviati dagli utenti sono influenzati da fattori non prevedibili.
-                \item Singolo agente, in quanto c'è un solo questo filtro anti-spam in un client di messaggistica.
+                \item Singolo agente.
                 \item Dinamico, difatti potrebbero venire a crearsi nuovi schemi di messaggi spam.
-                \item Discreto, in quanto non sono presenti variabili continue (difatti una variabile continua potrebbe essere la frequenza di invio di un determinato mittente, ma io non ho trovato tale informazioni).
+                \item Discreto, in quanto non sono presenti variabili continue (ad esempio la frequenza di invio di un determinato mittente, ma io non ho trovato tale informazioni).
                 \item Sequenziale, difatti il filtro anti-spam verrà pienamente influenzato dalle esperienze passate, per andare a prendere delle decisioni.
             \end{itemize}
 
-        \newpage
         \subsection{Analisi del problema}
-            Questo semplice progetto mira quindi a costruire un filtro anti-spam sms, si tratta quindi di un problema di Machine Learning, più nello specifico di un problema di apprendimento supervisionato, nonchè di classificazione. Nelle successive sezioni vado a descrivere tutte le problematiche che ho affrontato: dalla scelta dei dati, fino al deploy del modello.\\
+            Quindi in poche parole SMSecure mira a costruire un filtro anti-spam sms, si tratta quindi di un problema di Machine Learning, più nello specifico di un problema di apprendimento supervisionato, nonchè di classificazione. Nelle successive sezioni vado a descrivere tutte le problematiche che ho affrontato: dalla scelta dei dati, fino al deploy del modello.\\
             Per quanto riguarda le tecnologie che ho utilizzato per lo sviluppo del progetto, abbiamo:
             \begin{itemize}
                 \item Python (in dettaglio le librerie per ML, come sickitLearn, Pandas,  ecc.),
                 \item JupyterNotebook all'interno dell'IDE PyCharm
-                \item GitHub per il versionamento,  \href{https://github.com/russosamuele/SMSecure.git}{link}
-                \item Per quanto riguarda documentazione e presentazione overleaf e Canva.
+                \item GitHub per il versionamento,
+                \item Overleaf e Canva per documentazione e presentazione.
             \end{itemize}
 \newpage
 \section{Data Understanding}
     Tale fase è composta da più punti:
     \begin{itemize}
-        \item Acquisizione dei dati (scelta del dataset)
+        \item Acquisizione dei dati
         \item Esplorazione dei dati
         \item Analisi della qualità dei dati
     \end{itemize}
@@ -105,7 +104,7 @@
             \label{fig:enter-label}
         \end{figure}
 
-        È da notare che in rosso sono rappresentati gli SMS spam, mentre in blu quelli ham. Sull'asse y la varibaile count indica il numero di volte in cui un determinato messaggio ha un certo numero di caratteri. Compreso ciò dal grafico è subito possibile notare che i messaggi spam hanno un numero di caratteri mediamente maggiore dei messaggi ham. \\
+        È da notare che in rosso sono rappresentati gli SMS spam, mentre in blu quelli ham. Sull'asse y la variabile count indica il numero di volte in cui un determinato messaggio ha un certo numero di caratteri. Compreso ciò dal grafico è subito possibile notare che i messaggi spam hanno un numero di caratteri mediamente maggiore dei messaggi ham. \\
         Vediamo ora cosa emerge dal grafico che rappresenta il numero di parole.\\
 
         \begin{figure}[H]
@@ -115,7 +114,7 @@
             \label{fig:enter-label}
         \end{figure}
 
-        Si nota che vale lo stesso per il numero delle parole, difatti a rigor di logica il numero di parole è fortemente correlato al numero di caratteri, e quindi sarà lo stesso anche per il numero di frasi. Per vedere ancora più chiaramente tale correlazioni sono andato ad utilizzare un grafico riassuntivo, un pairplot.In tale tipo di grafico, ogni variabile numerica presente nel dataset viene confrontata con tutte le altre variabili numeriche tramite dei grafici a dispersione, che quindi consentono di visualizzare e individuare ancora meglio eventuali relazioni o tendenze.
+        Si nota che vale lo stesso per il numero delle parole, difatti per logica il numero di parole è fortemente correlato al numero di caratteri, e quindi sarà facile osservare lo stesso anche per il numero di frasi. Per vedere ancora più chiaramente tale correlazioni sono andato ad utilizzare un grafico riassuntivo, un pairplot, dove ogni variabile numerica presente viene confrontata con tutte le altre variabili numeriche tramite dei grafici a dispersione, che consentono di individuare e visualizzare meglio eventuali relazioni o tendenze.
 
         \begin{figure}[H]
             \centering
@@ -128,10 +127,9 @@
         \begin{itemize}
         \item gli sms spam hanno in media un numero di caratteri maggiore
         \item gli sms spam hanno in media un numero di parole maggiore
-        \item il numero di frasi è invece molto molto simile
         \end{itemize}
 
-        Infine, per calcolare la correlazione tra le variabili, possiamo usare un'ulteriore strumento: la heatmap, una mappa che utilizza colori per visualizzare i valori dei coefficienti di correlazione tra le diverse coppie di variabili nel dataset, consentendo di individuare facilmente relazioni tra di esse. Le celle più scure o più chiare indicano correlazioni più forti o più deboli, rispettivamente. Le variabili sono fortemente correlate tra loro se hanno valori vicini a 1 o -1, mentre hanno una bassa correlazione se hanno valori vicini a 0.
+        Per calcolare la correlazione tra le variabili, possiamo usare un'ulteriore strumento: la heatmap, una mappa che utilizza colori per visualizzare i valori dei coefficienti di correlazione tra le diverse coppie di variabili nel dataset, consentendo di individuare facilmente relazioni tra di esse. Le celle più scure o più chiare indicano correlazioni più forti o più deboli, rispettivamente. Le variabili sono fortemente correlate tra loro se hanno valori vicini a 1 o -1, mentre hanno una bassa correlazione se hanno valori vicini a 0.
 
         \begin{figure}[H]
             \centering
@@ -140,8 +138,8 @@
             \label{fig:enter-label}
         \end{figure}
 
-        E qui possiamo finalmente visualizzare l'effettiva correlazione tra le variabili. Si può notare con estrema facilità l'altissima correlazione tra il numero di caratteri e il numero di parole, cosa che è un pò meno marcata con il numero di frasi.\\
-        Un'altra cosa davvero molto interessante è andare a visualizzare quali paroli sono più o meno frequenti nelle rispettive categoria di messaggi. Per fare ciò ho utilizzato la libreria wordCloud che permette di andare a generare una rappresentazione grafica semplice ed intuitiva. Ecco i due grafici realizzati:
+        E qui possiamo finalmente visualizzare l'effettiva correlazione tra le variabili. Si può notare l'altissima correlazione tra il numero di caratteri e il numero di parole, cosa che è meno marcata con il numero di frasi.\\
+        Un'altra cosa davvero molto interessante è andare a visualizzare quali parole sono più frequenti nelle rispettive categoria di messaggi. Per fare ciò ho utilizzato la libreria WordCloud che permette di andare a generare una rappresentazione grafica semplice ed intuitiva. Ecco i due grafici realizzati:
 
         \begin{figure}[H]
             \centering
@@ -150,7 +148,7 @@
             \label{fig:enter-label}
         \end{figure}
 
-        Dai grafici emerge che le parole molto diffuse nei messaggi spam sono "free", "call", "text" e tantissime molte altre parole che difatti sono utilizzatissime nei messaggi spam, per  andare a fare pubblicità a servizi o tanto altro. Nel grafico di destra invece si possono osservare le parole più frequenti riscontrate nei messaggi ham, e come si può notare sono parole di utilizzo comune nei messaggi, ad esempio c'è anche la parola "ok".
+        Dai grafici emerge che le parole molto diffuse nei messaggi spam sono "free", "call", "text" e tantissime molte altre parole comuni dei messaggi spam, con lo scopo di fare pubblicità o tanto altro. Nel grafico di destra invece si possono osservare le parole più frequenti nei messaggi ham, e come si può notare sono parole di utilizzo comune, ad esempio c'è anche la parola "ok".
 
     \subsection{Analisi della qualità dei dati}
         In questa fase vado ad analizzare i problemi di qualità dei dati rilevati durante la fase di esplorazione. A partire dai primi grafici usati nell'esplorazione si può notare che la quantità di messaggi ham, è molto maggiore rispetto alla quantità di messaggi spam.
@@ -186,19 +184,19 @@
         \end{itemize}
          Quindi l'output di questa fase sarà un insieme di dati di input, che saranno utilizzati durante la modellazione dell'algoritmo di ML.
     \subsection{Data Cleaning}
-        In questa fase sostanzialmente vanno corretti alcuni dei problemi individuati in fase di Data understanding: valori nulli e duplicati; per poi passare alla trasformazione dei dati in modo da poter essere utilizzati e "dati in pasto" ad un algortimo di ML.\\
-        Quindi, innanzitutto, ho eliminato completamente due colonne dal dataset poiché erano completamente vuote. Successivamente, ho rimosso 403 valori duplicati. Inoltre, ho rinominato le colonne come "target" e "text" in quanto i nomi precedenti ("v1", "v2") erano ambigui e poco rappresentativi. Successivamente, ho proceduto sostituendo le variabili target "spam" e "ham" rispettivamente con 1 e 0. Ho adottato questa procedura per garantire la compatibilità con gli algoritmi di classificazione binaria.
+        In questa fase vanno corretti i problemi individuati in fase di Data understanding: nel mio caso i valori nulli e duplicati; per poi passare alla trasformazione dei dati in modo da poter essere utilizzati da un algoritmo di apprendimento.\\
+        Quindi, innanzitutto, ho eliminato completamente due colonne dal dataset poiché erano completamente vuote, ed ho rinominato le colonne "target" e "text" in quanto i nomi precedenti ("v1", "v2") erano ambigui e poco rappresentativi. Successivamente, ho rimosso 403 valori duplicati e ho sostituito le stringhe "spam" e "ham" della variabile target rispettivamente con i valori 1 e 0, per garantire la compatibilità con gli algoritmi di classificazione binaria.
 
-        Avendo a che fare con del testo, il "mining", ovvero l'estrazione di semantica dai testi è leggermente complicata e va adattata al contesto. I maggiori problemi da affrontare riguardano il fatto che nel linguaggio naturale son presenti più modi per esprimere stessi concetti, possono esserci errori grammaticali; o più in generale l'estrazione delle informazioni viene difficile. Nel mio caso trattandosi di testo di SMS, ho deciso di attuare le seguenti trasformazioni:
+        Avendo a che fare con del testo, ho effettuato la fase di "mining", ovvero l'estrazione di semantica dai testi, che va adattata al contesto. I maggiori problemi da affrontare riguardano il fatto che nel linguaggio naturale son presenti più modi per esprimere stessi concetti, possono esserci errori grammaticali; o più in generale l'estrazione delle informazioni viene difficile. Nel mio caso trattandosi di testo di messaggi, ho deciso di attuare le seguenti trasformazioni:
         \begin{itemize}
-            \item Tokenizzato in parole
-            \item Portato tutto le parole in minuscolo
+            \item Tokenizzazione
+            \item Portato tutto in minuscolo
             \item Rimosso i caratteri non alfanumerici
             \item Rimosso le stopwords
-            \item Stemming delle parole
+            \item Stemming
         \end{itemize}
-        Tutti queste trasformazioni da effettuare hanno scopi ben precisi; infatti la \textbf{tokenizzazione} aiuta a trattare le parole individualmente durante l'analisi;
-        \textbf{portare tutto in minuscolo} aiuta ad eliminare la distinzione tra maiuscole e minuscole, garantendo coerenza nell'analisi; la \textbf{rimozione caratteri non alfanumerici}va ad eliminare simboli e punteggiatura concentrando l'attenzione sulle informazioni sostanziali delle parole; la \textbf{rimozione delle stopwords}che sono parole comuni che spesso non contribuiscono significativamente al significato aiuta a ridurre il rumore nei dati; ed infine lo \textbf{stemming} che riduce le parole alle loro radici (stems) fa in modo che parole simili siano rappresentate in modo uniforme, semplificando l'analisi.
+        Tutte queste trasformazioni effettuate hanno scopi ben precisi; infatti la \textbf{tokenizzazione} aiuta a trattare le parole individualmente durante l'analisi;
+        \textbf{portare tutto in minuscolo} aiuta ad eliminare la distinzione tra maiuscole e minuscole, garantendo coerenza nell'analisi; la \textbf{rimozione caratteri non alfanumerici} va ad eliminare simboli e punteggiatura concentrando l'attenzione sulle informazioni sostanziali delle parole; la \textbf{rimozione delle stopwords} che sono parole comuni che non contribuiscono significativamente al significato aiuta a ridurre il rumore nei dati; ed infine lo \textbf{stemming} che riduce le parole alle loro radici (stems) fa in modo che parole simili siano rappresentate in modo uniforme, semplificando l'analisi.
         Ho realizzato ciò usando funzioni e dizionari preesistenti, andando solamente ad accorpare il tutto in un'unica funzione.
         \newpage
         \begin{verbatim}
@@ -247,26 +245,25 @@
         \end{verbatim}
 
         \subsection{Feature Selection}
-            La feature selection è il processo in cui si va a scegliere un sottoinsieme delle caratteristiche più rilevanti dai dati originali per andare a ridurre la complessità del modello e si conseguenza migliorare le prestazioni. Per far ciò si utilizza anche il Feature Engineering ovvero il processo nel quale il progettista utilizza la propria conoscenza del dominio per determinare le feature e dare più o meno enfasi ad esse. Nel mio caso, osservando i valori dopo, o comunque prima della fase di Feature Scaling, ho notato che: il numero di frasi dei messaggi è una feature a bassa varianza (i suoi valori variano poco) quindi con questa è una feature non rilevante per la classificazione; di conseguenza ho deciso di eliminarla per ridurre la complessità generale. In questa fase si vanno anche ad effettuare altre operazioni, come ad esempio la feature construction, in cui il progettista va a costruire nuovi feature a partire dai dati. Io già in precedenza ho costruito, partendo dal testo, il numero di frasi, di parole e di caratteri per ogni messaggio.
+            La feature selection è il processo in cui si va a scegliere un sottoinsieme delle caratteristiche più rilevanti dai dati originali per andare a ridurre la complessità del modello. Qui entra in gioco il \textbf{Feature Engineering} ovvero il processo nel quale il progettista utilizza la propria conoscenza del dominio per determinare le feature e dare più o meno enfasi ad esse. Nel mio caso, osservando i valori dopo, o comunque prima della fase di Feature Scaling, ho notato che: il numero di frasi dei messaggi è una feature a bassa varianza (ovvero i suoi valori variano poco) quindi tale feature è non rilevante per la classificazione; di conseguenza ho deciso di eliminarla. In questa fase si vanno anche ad effettuare altre operazioni, come ad esempio la \textbf{feature construction}, in cui il progettista va a costruire nuove caratteristiche a partire dai dati. Personalmente ho costruito in precedenza due feature, difatti partendo dal testo ho ricavato il numero di frasi, di parole e di caratteri.
 
         \subsection{Data Balancing}
-            Il Data Balancing sono un insieme di tecniche per andare a convertire un dataset sbilanciato, ovvero con una distribuzione sbilanciata delle classi nei dati, in un dataset bilanciato. Difatti avere un dataset sbilanciato può portare a diversi problemi, tra questi previsioni sbilanciate e innaccurate, nonchè overfitting.
+            Il Data Balancing si riferisce alle tecniche usate per convertire un dataset sbilanciato in un uno bilanciato. Avere un dataset sbilanciato può portare a diversi problemi, tra questi previsioni sbilanciate e innaccurate, nonchè problematiche di overfitting.
             Le tecniche applicabili sono due:
             \begin{itemize}
                 \item Undersampling
                 \item Oversampling
             \end{itemize}
-            con la presenza di varianti che includono il clustering, per evitare alcuni inconvenienti, come ad esempio andare ad eliminare righe molto utili per l'apprendimento. In generale, in base alla propria situazione sarà, piò o meno adatta una precisa tecnica.
-            Nel mio caso, il dataset è fortemente sbilanciato, con una presenza maggiore di istanze della classe ham. Quindi le possibilità erano due:
+            con la presenza di varianti che includono il clustering, per evitare alcuni inconvenienti, come ad esempio andare ad eliminare righe molto utili per l'apprendimento. Nel mio caso, il dataset è fortemente sbilanciato, con una presenza maggiore di istanze della classe ham. Quindi le possibilità sono due:
             \begin{itemize}
                 \item Eliminare istanze della classe ham
                 \item Aumentare le istanze della classe spam
             \end{itemize}
-            Tra le due, per evitare duplicazione di entry e quindi overfitting, ho deciso di optare per la prima opzione, andando però a considerare l'uso dell' \textbf{undersampling con clustering}, per evitare di eliminare istanze rilevanti per l'apprendimento.\\
-            Per quanto riguarda l'algoritmo di clustering da utilizzare ho optato per il k-means, l'algoritmo a partizionamento iterativo più diffuso, per la compatibilità con la forma, e la presenza di pochi outlier, che comunque ho deciso di eliminare in questo modo: ho calcolato media e deviazione standard, ed ho impostato una soglia di eliminazione pari 4.\\
-            Un parametro fondamentale per la configurazione del k-means è k, ovvero il numero di cluster da generare; quindi non sapendo in quanti cluster andare a suddividere il dataset ho optato nella valutazione di due tecniche:
+            Tra le due, per evitare troppa duplicazione e quindi probabile overfitting, ho deciso di optare per la prima opzione, andando a considerare l'uso dell' \textbf{undersampling con clustering}, per evitare appunto di eliminare istanze particolarmente rilevanti per l'apprendimento.\\
+            Per quanto riguarda l'algoritmo di clustering da utilizzare ho optato per il k-means, l'algoritmo a partizionamento iterativo più diffuso, per principalmente due motivi: la forma della distribuzione dei dati, e la presenza di pochi outlier, che in parte ho deciso di eliminare. Per individuare ed eliminare gli outlier ho calcolato media e deviazione standard, per poi eliminare tutte le istanze che distano 4 deviazioni standard dalle media.\\
+            Per la configurazione del k-means c'è un parametro di vitale importanza: k, ovvero il numero di cluster da generare. Non sapendo che valore assegnare a tale parametro ho optato nella valutazione di due tecniche:
             \begin{itemize}
-                \item Il punto di gomito
+                \item Elbow Point
                 \item Silhouette score
             \end{itemize}
 
@@ -277,16 +274,16 @@
                     \includegraphics[width=0.7\linewidth]{images/elbowPoint.png}
                     \label{fig:enter-label}
                 \end{figure}
-                Come si può notare dal grafico, il numero ideale di cluster suggerito è tra 4 e 5. Ho successivamente anche provato il silhoette coefficient.
+                Come si può notare dal grafico, il numero ideale di cluster suggerito è tra 4 e 5. Ho successivamente provato anche il silhoette coefficient per avere un'ulteriore confronto.
 
-            \subsubsection{Silhouette coefficient}
-                È una misura della coesione e separazione tra i dati. Più in particolare, quantifica quanto i dati siano ben disposti nei cluster generati. Il coeﬃciente si basa su quanto bene i dati sono ammassati nel cluster di riferimento; e quanto è distante ciascun campione da qualsiasi altro cluster. Il coeﬃciente varia tra -1 e +1 e valori alti indicano condizioni maggiori di coesione e di separazione dei dati.
+            \subsubsection{Silhouette Coefficient}
+                È una misura della coesione e separazione tra i dati. Più in particolare, quantifica quanto i dati siano ben disposti nei cluster generati; in particolare si basa su quanto bene i dati sono ammassati nel cluster e quanto è distante ciascun campione da qualsiasi altro cluster. Tale coefficiente varia tra -1 e +1 e i valori alti indicano maggiore coesione e separazione dei dati.
                 \begin{figure}[H]
                     \centering
                     \includegraphics[width=0.6\linewidth]{images/silhouetteScores.png}
                     \label{fig:enter-label}
                 \end{figure}
-                Anche qui ho usato una valutazione empirica, ovvero ho eseguito il k-means con diversi valori di k (2, 3, 4, 5) e ho osservato che il silhouette score fosse maggiore per k = 2.
+                Anche qui ho usato una valutazione empirica, ovvero ho eseguito il k-means con diversi valori di k (2, 3, 4, 5) e ho osservato che il silhouette coefficient è maggiore per k = 2.
 
             \subsubsection{Scelta del k}
                 Quindi ho ottenuto valori discordanti dalle due metodologie usate:
@@ -294,20 +291,20 @@
                     \item Elbow Point: k=3 o k=4
                     \item Silhouette score: k=2
                 \end{itemize}
-                Per andare quindi a decidere quale valore di k usare, ho semplicemente provato ad eseguire i passi successivi del progetto per i diversi valori di k, ovvero k=1, 2, 3; ottenendo risultati riguardo la classificazione di gran lunga maggiori per k=2.\\
+                Quindi per andare a decidere il valore da assegnare a k, ho eseguito tutti i passi successivi (modeling, evaluation) per k=2, 3, 4. Ho osservato  risultati migliori per k=2.\\
 
             \subsubsection{Clustering con k=2}
-                Una volta individuato il parametro k sono andato ad eseguire k-means.
+                Una volta individuato il miglior valore per k sono andato ad eseguire in maniera definitiva il clustering.
                 \begin{figure}[H]
                     \centering
                     \includegraphics[width=0.9\linewidth]{images/clust.png}
                     \caption{k-means con k=2, dopo la rimozione degli outlier}
                     \label{fig:enter-label}
                 \end{figure}
-                con un silhouette score pari a 0.6851.
 
             \subsubsection{Selezione campioni dai cluster}
-                A questo punto ho semplicemente selezionato 325 sample per cluster, in modo da avere un totale di 654 sms ham. In questo modo ho esattamente lo stesso numero di messaggi di ogni classe.
+                Una volta effettuato il clustering, e aver creato due cluster distinti ho selezionato casualmente 325 istanze per ogni cluster, in modo da avere un totale di 650 sms ham. In questo modo ho quasi lo stesso numero di messaggi per ogni classe.
+
                 \begin{figure}[H]
                     \centering
                     \includegraphics[width=0.5\linewidth]{images/datasetBilanciato.png}
@@ -318,31 +315,31 @@
 
 
         \subsection{Rappresentazione Numerica dei Dati Testuali}
-            Prima di procedere con la fase di modeling, è necessaria un'ultima trasformazione dei dati. La ragione di questa operazione risiede nel fatto che la maggior parte degli algoritmi di ML richiede dati in formato numerico come input. Inoltre, cosa non meno importante, è necessario andare a dividere l'insieme dei dati in Train set e Test set.\\
-            Usando il TfidfVectorizer ho trasformato i dati testuali in una rappresentazione numerica, successivamente ho combinato ciò con le feature già numeriche (numero parole, numero caratteri), per poi procedere, nella sezione successiva, allo split del dataset.
+            Prima di procedere con la fase di modeling, sono necessarie alcuni passaggi finali, tra questi: trasformazione dei dati in rappresentazione numerica e split del dataset. La ragione della prima operazione risiede nel fatto che la maggior parte degli algoritmi di apprendimento richiede in input dati in formato numerico.\\
+            Usando il TfidfVectorizer ho trasformato i dati testuali in una rappresentazione numerica, successivamente ho combinato l'output di tale operazione con le feature già numeriche (numero parole, numero caratteri), per poi procedere, allo split del dataset.
 
         \subsection{Split del Dataset}
-            Come ribadito precedentemente, prima di passare alla fase di modeling c'è bisogno di andare a dividire il dataset in due sottoinsiemi: uno per l'addestramento ed uno per il testing. Difatti andare ad addestrare e testare un modello sugli stessi dati porta ad avere risultati totalmente inaﬃdabili.\\
-            Per fare ciò, mi sono affidato alla libreria sickitLearn, usando il train test split.
-            Dopo aver fatto ciò i dati sono pronti per essere dati in input ad un modello di ML, quindi procedo alla fase di modeling.
+            Come ribadito precedentemente, prima di passare alla fase di modeling c'è bisogno di andare ad effettuare lo split del dataset, ovvero dividere il l'insieme di partenza in due sottoinsiemi: uno per l'addestramento ed uno per il testing. Difatti andare ad addestrare e testare un modello sugli stessi dati porta ad avere risultati inaﬃdabili.\\
+            Per fare tale operazione mi sono affidato alla libreria sickitLearn, ed in particolare al 'train test split'.
+            Dopo questo i dati sono finalmente pronti per essere dati in input ad un modello di Machine Learning.
 
         \newpage
         \section{Data Modeling}
-            Nella sezione precedente abbiamo preparato i dati, quindi ora può iniziare la fase di modellazione. Inizialmente va quindi selezionato l’algoritmo da
-            utilizzare per poi passare alla fase di addestramento, dove si addestra il modello e si descrivono i risultati ottenuti.
+            Nella sezione precedente ho preparato i dati in modo da essere dati in input ad un algortimo, quindi può iniziare la fase di modeling. Per prima cosa va quindi selezionato l’algoritmo da
+            utilizzare per poi passare alla fase di addestramento, dove si addestra il modello e di conseguenza si descrivono i risultati ottenuti.
 
             \subsection{Scelta dell'algoritmo}
-                Si tratta di un problema di apprendimento supervisionato, e più nel dettaglio di un problema di classificazione. Questo perchè, innanzitutto verrà fornito all'algoritmo un insieme di dati con rispettivo valore della variabile target, inoltre tale variabile potrà assumere un numero discreto di valori, nel mio caso solamente 2: 0 per "ham" e 1 per "spam". Quindi i possibili algoritmi utilizzabili erano i seguenti: Regressione Logistica, Support Vector Machines, K-Nearest Neighbors, Random Forest, Naive Bayes e gli Alberi Decisionali (DTC).\\
+                SMSecure va quindi a trattare un problema di apprendimento supervisionato, e più nel dettaglio un problema di classificazione. Difatti verrà fornito all'algoritmo un insieme di dati con rispettivo valore della variabile target, ed inoltre la variabile target potrà assumere solamente un numero discreto di valori, nello specifico solamente due: 0 per "ham" e 1 per "spam". Quindi i possibili algoritmi utilizzabili sono i seguenti: Regressione Logistica, Support Vector Machines, K-Nearest Neighbors, Random Forest, Naive Bayes e gli Alberi Decisionali (DTC).\\
                 Tuttavia ho concentrato la mia scelta solo sui due algortimi visti a lezione, ovvero:
                 \begin{itemize}
                     \item Naive Bayes
                     \item Alberi Decisionali (DTC)
                 \end{itemize}
-                ,due algoritmi che operano in maniera differente per arrivare alla classificazione: infatti il primo considera le caratteristiche della nuova istanza da classificare e calcola la probabilità che queste facciano parte di una classe tramite l’applicazione del teorema di Bayes, mentre il secondo mira a creare un albero i cui nodi rappresentano un sotto-insieme di caratteristiche del problema e i cui archi rappresentano delle decisioni; il tutto sfruttando i concetti di Entropia e Information-Gain utili per andare a suddividere l'insieme di partenza.\\
-                In linea generale, gli Alberi Decisionali sono noti per la loro flessibilità nel catturare relazioni complesse nei dati, mentre il classificatore Naive Bayes eccelle per la sua velocità di addestramento, efficacia nei dati testuali e performance quando le caratteristiche sono approssimativamente indipendenti. Poiché non sono un esperto di tali algoritmi e non posso prevedere quale si adatti meglio al problema, ho scelto di adottare un approccio di valutazione empirica. Questo implica l'addestramento del modello prima con un Naive Bayes e successivamente con un Decision Tree, per poi valutare e confrontare i risultati ottenuti. Così facendo andrò a determinare quale algoritmo si comporta meglio rispetto ai miei obiettivi.
+                Questi sono due algoritmi che operano in maniera differente per arrivare alla classificazione: infatti il primo considera le caratteristiche della nuova istanza da classificare e calcola la probabilità che queste facciano parte di una classe tramite l’applicazione del teorema di Bayes, mentre il secondo mira a creare un albero i cui nodi rappresentano un sotto-insieme di caratteristiche del problema e i cui archi rappresentano delle decisioni; il tutto sfruttando i concetti di Entropia e Information-Gain utili per andare a suddividere l'insieme di partenza.\\
+                In linea generale, gli Alberi Decisionali sono noti per la loro flessibilità nel catturare relazioni complesse nei dati, mentre il classificatore Naive Bayes eccelle per la sua velocità di addestramento, efficacia nei dati testuali. Poiché non sono un esperto di algoritmi e non posso prevedere quale si adatti meglio al mio problema, ho adottato la valutazione empirica:  ovvero l'addestramento del modello prima con un Naive Bayes e successivamente con Decision Tree, per poi valutare e confrontare i risultati ottenuti. In questo modo riesco a determinare quale algoritmo si comporta meglio rispetto ai miei obiettivi e procedere quindi all'export.
 
             \subsection{Addestramento}
-                In tale sezione quindi si addestra il modello in base all'algoritmo scelto in precedenza. Nel mio caso procedo prima ad addestrare il modello usando Naive Bayes, poi farò lo stesso con Decision Tree, ed infine valuterò le prestazioni ottenute per entrambi. Ciò mi consentirà di capire quale dei due algoritmi si adatta meglio ai miei dati, e va a fare delle predizioni più accurate.\\
+                In questa sezione procedo ad addestrare il modello in base all'algoritmo scelto in precedenza. Nel mio caso, come già detto,  procedo prima all'addestramento usando Naive Bayes, per poi fare lo stesso con Decision Tree. Infine valuterò le prestazioni ottenute e le metterò a confronto. Tutto ciò mi consentirà di capire quale algoritmo si adatta meglio ai dati, e va di conseguenza a fare delle predizioni migliori.\\
 
                 \subsubsection{Naive Bayes}
                     L'algoritmo Naive Bayes \cite{wikiNaiveBayes} è un algoritmo di classificazione basato sul teorema di Bayes, che riguarda la probabilità condizionata. Si parla di  "naive" perchè tale algortimo considera l'indipendenza tra le caratteristiche, ciò semplifica i calcoli e rende l'algoritmo veloce. Ci sono diverse varianti del Naive Bayes, tra cui:
@@ -351,15 +348,15 @@
                         \item  Gaussian Naive Bayes (GNB)
                         \item Bernoulli Naive Bayes (BNB)
                     \end{itemize}
-                    che differiscono nelle loro ipotesi sulla distribuzione delle caratteristiche. La distribuzione si riferisce alla probabilità delle diverse features condizionate alle classi di output. Ad esempio l'MNB è particolarmente utile per problemi di classificazione di testi, il GNB per dati continui, ed infine il BNB per dati binari, trattando le caratteristiche come presenza o assenza di attributi. Anche qui ho adottato la valutazione empirica, andandoli a provare tutti! \\
+                    Tali differiscono nelle loro ipotesi sulla distribuzione delle caratteristiche, ovvero la probabilità delle diverse features condizionate alle classi di output. Ad esempio l'MNB è particolarmente utile per problemi di classificazione di testi, il GNB per dati continui, ed infine il BNB per dati binari. Anche qui ho adottato la valutazione empirica, andandoli a provare tutti! \\
                     Queste sono le matrici di confusione che ho ottenuto:
                     \begin{figure}[H]
                         \centering
-                        \includegraphics[width=1.1\linewidth]{images/naiveBayesResults.jpg}
+                        \includegraphics[width=1\linewidth]{images/naiveBayesResults.jpg}
                         \caption{Risultati BNB, GNB, MNB. Rispettivamente in questo ordine}
                         \label{fig:enter-label}
                     \end{figure}
-                    Poi a partire dalle matrici di confusione, che esprimono al loro interno il numero di True Positive (riquadro in alto a sinistra), True Negative (riquadro in basso a destra), False Positive (riquadro in alto a destra), False Negative (riquadro in basso a sinistra) sono andato anche a calcolare delle metriche di valutazione, più nello specifico Precisione, Recall e Accuratezza; le quali formule si basano proprio sugli indicatori espressi da tali matrici. Il mio obiettivo è andare a massimizzare tutte e tre le metriche: che esprimono rispettivamente il numero di predizioni corrette per la classe ‘true’ rispetto a tutte le predizioni fatte, il numero di predizioni corrette per la classe ‘true’ rispetto a tutte le istanze positive di quella classe, ed infine il numero totale di predizioni corrette sia della classe positiva che negativa.\\
+                    Successivamente a partire dalle matrici di confusione, che esprimono al loro interno il numero di True Positive (alto a sinistra), True Negative (basso a destra), False Positive (alto a destra), False Negative (basso a sinistra) sono andato anche a calcolare alcune metriche di valutazione, ovvero Precisione, Recall e Accuratezza; che vanno calcolate proprio usando gli indicatori espressi dalle matrici. Il mio obiettivo è andare a massimizzare tutte e tre le metriche.\\
                     Risultati ottenuti:
                     \begin{figure}[H]
                         \centering
@@ -377,77 +374,74 @@
 
                 \subsubsection{Decision Tree}
                     Il DTC \cite{wikiDTC} è un classificatore che opera attraverso una struttura ad albero. Ogni nodo rappresenta un sottoinsieme delle caratteristiche, e i rami che si dipartono da ogni nodo indicano i possibili valori di quelle caratteristiche.
-                    Il processo di costruzione dell'albero inizia con la scelta della caratteristica che meglio divide il set di dati in classi omogenee, ciò viene fatto utilizzando misure come l'entropia o l'information-gain (misura quanto un attributo divide bene il dataset). Una volta individuata la caratteristica deve essere creato un nodo e  diviso il set di dati in base ai possibili valori di quella caratteristica. Ciò viene quindi ripetuto su ciascun sottoinsieme di dati, creando ulteriori nodi e rami. Questo continua fino a quando viene raggiunto un criterio di stop o comunque si arriva ad avere dei set puri, ovvero composte da istanze di un'unica classe.
-                    Ho creato un modello usando tale classificatore, e questa è la matrice di confusione ottenuta:
+                    Il processo di costruzione dell'albero inizia con la scelta della caratteristica che meglio divide il set di dati in classi omogenee, ciò viene fatto utilizzando misure come l'entropia o l'information-gain (misura quanto un attributo divide bene il dataset). Una volta individuata la caratteristica deve essere creato un nodo e  diviso il set di dati in base ai possibili valori di quella caratteristica. Ciò viene quindi ripetuto su ciascun sottoinsieme di dati, creando ulteriori nodi e rami
+                    fin quando viene raggiunto un criterio di stop o si arriva ad avere dei set puri, ovvero composti esclusivamente da istanze di un'unica classe.
+                    Dopo l'addestramento ho testato il modello, e questa è la matrice di confusione ottenuta:
                     \begin{figure}[H]
                         \centering
-                        \includegraphics[width=0.5\linewidth]{images/dtcResult.png}
+                        \includegraphics[width=0.6\linewidth]{images/dtcResult.png}
                         \caption{Matrice confusione DTC (maxDepth=8)}
                         \label{fig:enter-label}
                     \end{figure}
-                    Tuttavia l'algortimo DTC ha un importante parametro: maxDepth, ovvero il numero massimo di livelli creati per l'albero. Quindi per trovare la profonditò massima ottimale ho eseguito l'algoritmo più volte, andando a variare il parametro osservando che le performance in termini di precisione/accuratezza son salite fino ad una profondità massima pari ad 8, per poi andare in stallo o addirittura peggiorare.
+                    È da notare che l'algoritmo DTC ha un importante parametro: maxDepth, ovvero il numero massimo di livelli creati per l'albero. Per trovare la profondità massima ottimale ho rieseguito l'algoritmo più volte, andando a variare il parametro. Ho osservato che le performance in termini di precisione/accuratezza/recall sono aumentate fino ad una profondità pari ad 8, per poi andare in stallo o peggiorare.
 
                     \subsubsection{MNB vs DTC}
-                        Considerando una profondità massima pari ad 8, questi sono i valori ottenuti confrontati con i risultati del Naive Bayes MNB in termini di Precisione, Recall, Accuratezza.
 
                         \begin{figure}[H]
                             \centering
                             \includegraphics[width=1\linewidth]{images/FinalTable.png}
-                            \caption{MNB vs DTC}
                             \label{fig:enter-label}
                         \end{figure}
 
-                        Tuttavia come si può notare i risultati ottenuti non sono dei migliori. Ciò probabilmente è dovuto a più fattori. In particolare potrebbe esser dovuto alla grandezza del dataset; infatti dopo il bilanciamento ho solamente 650 entry per classe, il che potrebbe non bastare per creare un buon decision tree. Un'altro fattore è dal modo di operare dei due algoritmi, difatti per sua natura il Naive Bayes MNB semplifica la complessità del problema assumendo un'indipendenza tra le varie caratteristiche. Quindi nel contesto dei messaggi ham/spam, l'algoritmo considera ad esempio la probabilità di trovare una certa parola in un messaggio, di conseguenza se una parola specifica è spesso associata ai messaggi spam nei dati di addestramento, allora il modello imparerà questa relazione e utilizzerà queste informazioni per fare predizioni su nuovi messaggi.
-                        In generale questo è un grafico che riporta i risultati ottenuti da tutti gli addestramenti svolti:
+                        Come si può notare i risultati ottenuti  usando il DTC non sono dei migliori. Ciò probabilmente è dovuto a più fattori, in particolare  alla grandezza del dataset, difatti dopo il bilanciamento ho solamente 650 entry per classe. Quindi la discrepanza tra le due valutazioni potrebbe essere data dal differente modo di operare dei due algoritmi. Per sua natura il Naive Bayes semplifica la complessità del problema assumendo un'indipendenza tra le varie caratteristiche, quindi nel contesto dei messaggi considererà la probabilità di trovare una certa parola in un messaggio, di conseguenza se una parola specifica è spesso associata ai messaggi spam in addestramento, allora il modello imparerà tale relazione e utilizzerà queste informazioni per fare predizioni su nuove istanze. Conseguenza di quanto detto è che il Naive Bayes si adatta facilmente a situazioni in cui ci sono relativamente pochi dati, cosa che non fa il Decision Tree.
+                        Questo è un grafico che riporta i risultati ottenuti da tutti gli addestramenti svolti:
                         \begin{figure}[H]
                             \centering
                             \includegraphics[width=1\linewidth]{images/AllResult.png}
                             \label{fig:enter-label}
                         \end{figure}
-                        Come già si è potuto capire, l'algoritmo che si è comportato meglio è stato il Naive Bayes MNB. Quindi dopo esser giunto a questa conclusione posso procedere alla fase di valutazione.
+                        Come emerge l'algoritmo che si è comportato meglio è stato il Naive Bayes MNB.
         \newpage
         \section{Evaluation}
             In questa fase si va a valutare se i
             risultati sono chiari, se sono in linea con gli obiettivi e se rivelano delle prospettive aggiuntive
-            alle quali il progettista non aveva pensato, nonchè verificare la consistenza e la solidità dell’intero processo.
-            Vado quindi ad esaminare più nel dettaglio i risultati che ho ottenuto dall'algortimo migliore dopo la valutazione empirica.
-            Il Naive Bayes MNB mi ha dato i seguenti risultati:
+            alle quali non si era pensato, nonchè verificare la consistenza e la solidità dell’intero processo.
+            Vado quindi ad esaminare più nel dettaglio i risultati che ho ottenuto
+            dall'addestramento e dal testing  del Naive Bayes MNB, che ha avuto le seguenti performance:
             \begin{figure}[H]
                 \centering
                 \includegraphics[width=1\linewidth]{images/MNBresult.png}
                 \label{fig:enter-label}
             \end{figure}
-             Ho voluto effettuare un'altra verifica della bontà del modello attraverso la ROC-AUC curve, che visualizza il trade-off tra Recall e specificità (misura della sua capacità di identificare correttamente i casi negativi) del modello, ovvero quanto bene il modello riesce a distinguere tra messaggi ham e spam.
+             Per avere più chiara la bontà del modello ho effettuato un'ulteriore valutazione attraverso la ROC-AUC curve, che consente di visualizzare il trade-off tra Recall e specificità. In poche parole misura la capacità di identificare correttamente i casi negativi, ovvero quanto bene il modello riesce a distinguere tra messaggi ham e spam.
              \begin{figure}[H]
                  \centering
-                 \includegraphics[width=0.5\linewidth]{images/ROC-AUC.png}
-                 \caption{ROC-AUC curve di Naive Bayes MNB}
+                 \includegraphics[width=0.6\linewidth]{images/ROC-AUC.png}
                  \label{fig:enter-label}
              \end{figure}
-             La linea diagonale rappresenta il risultato di una scelta casuale, quindi un qualunque modello utile deve essere al suo di sopra. Nel mio caso è proprio così. Inoltre un buon modello deve posizionarsi alto a sinistra, ovvero deve avere sensibilità elevata e basso tasso di falsi positivi, cioè il modello deve riuscire a classificare correttamente la maggior parte dei casi positivi senza generare falsi positivi. Anche nel mio caso è così. Ultima non meno importante la AUC (Area sotto la curva) che fornisce una misura aggregata delle prestazioni del modello, ad esempio un'area di 1 indica un modello perfetto, mentre un'area di 0.5 indica una scelta casuale. E come si può notare il mio modello ha ottenuto un valore pari a 0.99.
-             Quindi in conclusione posso considerare la costruzione del modello e in generale dell'approccio completa, ci conseguenza posso andare alla fase di Deployment.
+             La linea diagonale rappresenta il risultato di una scelta casuale, quindi un qualunque modello utile deve essere al suo di sopra. Nel mio caso è proprio così. Inoltre un buon modello deve posizionarsi in alto a sinistra, ovvero deve avere sensibilità elevata e basso tasso di falsi positivi, cioè il modello deve riuscire a classificare correttamente la maggior parte dei messagi spam senza generare falsi positivi, ovvero ham classificati come spam. Ultima non meno importante la AUC (Area sotto la curva) che fornisce una misura generale delle prestazioni del modello, ad esempio un'area di 1.0 indica un modello perfetto, mentre un'area di 0.5 indica una scelta casuale. Il mio modello ha ottenuto un valore pari a 0.99, che è un ottimo risultato.
+             Quindi posso considerare la costruzione del modello e in generale dell'approccio completa.
 
         \newpage
         \section{Deployment}
-            La fase di deployment rappresenta il culmine dell'intero processo di sviluppo di un modello di ML, si va quindi a trasformare il modello addestrato in una soluzione pronta per l'uso. Quindi per prima cosa ho dovuto esportare il modello precedentemente addestrato, in modo da poterlo integrare in una semplice applicazione. L'idea per questa applicazione è la seguente: una semplice text area in cui l'utente può inserire il testo del messaggio ricevuto, e premendo un apposito pulsante, verrà visualizzata la predizione del sistema. Inoltre verrà anche mantenuta la history dei messaggi, fino alla chiusura della schermata. Per realizzare ciò ho utilizzato la libreria streamlit, adatta alla creazione di web app veloci, performanti e belle.
+            La fase di deployment rappresenta il culmine dell'intero processo di sviluppo di un modello di ML, si va quindi a trasformare il modello addestrato in una soluzione pronta per l'uso. Quindi ho dovuto esportare il modello precedentemente addestrato, per integrarlo in una semplice applicazione. L'idea per questa applicazione è la seguente: una semplice text area in cui l'utente può inserire il testo del messaggio ricevuto, e premendo un apposito pulsante, verrà visualizzata la predizione del sistema. Inoltre verrà anche mantenuta la history dei messaggi, fino alla chiusura della schermata. Per realizzare ciò ho utilizzato la libreria Streamlit, adatta alla creazione di veloci web app.
             \begin{figure}[H]
                 \centering
-                \includegraphics[width=0.6\linewidth]{images/app.png}
+                \includegraphics[width=1\linewidth]{images/app.png}
                 \caption{SMSecure app [schermata di apertura]}
                 \label{fig:enter-label}
             \end{figure}
-            L'app inoltre, una volta che viene fatta una predizione va anche ad indicare eventuali parole individuate che frequentemente appaiono in messaggi ham o spam.
-            Per realizzare tutto ciò quindi, come già detto, ho dovuto esportare il modello addestrato, ma insieme ad esso ho esportato anche il tfidf, in modo da garantire che la rappresentazione dei dati utilizzata durante l'addestramento sia coerente con quella utilizzata durante il deployment. Per garantire appieno questa coerenza non è bastato solamente andare ad usare lo stesso vectorizer, ma ho dovuto eseguire sul messaggio inserito dall'utente tutte le operazioni che ho fatto in fase di addestramento, dalla data preparation alla trasformazione del testo in dati numerici, andando anche a ricavare dal testo il numero di parole e il numero di caratteri. Infine ho esportato dal notebook anche le frequenze delle parole più diffuse nei messaggi ham e spam, in modo da cercare eventuali corrispondenze e di conseguenza aumentare l'explainability del modello.
+            L'app inoltre, una volta che viene fatta una predizione va anche a visualizzare eventuali parole individuate che frequentemente appaiono in messaggi ham o spam.
+            Per realizzare ciò, ho quindi dovuto esportare oltre al modello addestrato, anche il tfidf, in modo da garantire che la rappresentazione dei dati utilizzata durante l'addestramento sia coerente con quella utilizzata durante il deployment, ed anche la frequenza di parole ham/spam. Per garantire coerenza nell'intero processo non è bastato solamente andare ad usare lo stesso vectorizer, ma ho dovuto eseguire sul messaggio inserito dall'utente tutte le operazioni che ho fatto in fase di addestramento, dalla data preparation alla trasformazione del testo in dati numerici, andando anche a ricavare dal testo il numero di parole e il numero di caratteri.
             \begin{figure}[H]
                 \centering
-                \includegraphics[width=0.6\linewidth]{images/app2.png}
+                \includegraphics[width=1\linewidth]{images/app2.png}
                 \caption{SMSecure app [explainability e history]}
                 \label{fig:enter-label}
             \end{figure}
 
-        \newpage
         \section{Conclusioni}
-            Concludere il mio primo progetto di ML è stata un'esperienza ricca di apprendimento personale, in cui ho potuto affrontare nuove sfide: partendo dall'approfondimento delle conoscenze in Python fino ad arrivare a librerie più specifiche. In particolare, l'utilizzo di algortimi di classificazione e la gestione di tecniche di preprocessing del testo sono state sfide interessanti e piacevoli. Per quanto riguarda invece gli obiettivi che mi ero proposto ad inizio progetto, ovvero familiarizzare con parte dei concetti visti a lezione andando a sviluppare un modello di ML non estremamente complesso, posso dire di essere soddisfatto e di aver raggiunto ciò che mi ero prefissato.
+            Concludere il mio primo progetto di ML è stata un'esperienza ricca di apprendimento personale, in cui ho potuto affrontare nuove sfide, a partire dall'approfondimento del linguaggio Python fino ad arrivare a librerie più specifiche per il Machine Learning. L'utilizzo di algoritmi di classificazione e tecniche di preprocessing del testo sono state sfide interessanti e piacevoli. Per quanto riguarda gli obiettivi che mi ero proposto di realizzare ad inizio progetto posso dire di essere soddisfatto e di aver raggiunto ciò che mi ero prefissato.
 
 
 \newpage
