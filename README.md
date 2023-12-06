@@ -16,13 +16,15 @@ Sono presenti inoltre due cartelle (una dedicata allo sviluppo dell'app, una all
 
 
 # Replicare il progetto
-Requisiti consigliati:
-- Python 3.3
-- PyCharm
+Requisiti:
+- Python 3
+
+Consigli d'utilizzo:
+- PyCharm IDE
 
 Dato che la repo è pubblica, sarà possibile scaricare l'intera repo. 
 Dopo aver scaricato la repo:
-- aprire il progetto con PyCharm
+- aprire il progetto con PyCharm, o un qualunque IDE
 - aprire un terminale nella cartella 'App'
 - digitare 'streamlit run app.py'
 A questo punto verrà lanciata l'app SMSecure sul browser di default, e sarà possibile inserire nel sistema dei messaggi. Cliccando il pulsante 'Predict' il sistema classificherà il messaggio e mostrerà l'output.
