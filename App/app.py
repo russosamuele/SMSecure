@@ -9,10 +9,11 @@ from scipy.sparse import hstack
 import pandas as pd
 
 
+# oggetti per utilizzi futuri
 ps = PorterStemmer()
 scaler = MinMaxScaler()
 
-# Inizializza la sessione di stato
+# sessione di stato (mi serve per mantenere la history dei messaggi)
 if 'predictions_history' not in st.session_state:
     st.session_state.predictions_history = []
 
@@ -50,18 +51,20 @@ def calculate_word_char_count(text):
     return words, characters
 
 
-# import model and vectorizer
+# import modello, tfidf, frequenza parole ham, frequenza parole spam
 tfidf = pickle.load(open('vectorizer.pkl', 'rb'))
 model = pickle.load(open('model.pkl', 'rb'))
 spamWords = pickle.load(open('spamWords.pkl', 'rb'))
 hamWords = pickle.load(open('hamWords.pkl', 'rb'))
 
-st.title("SMSSecure - SMS Classifier")
+# APP
 
-input_sms = st.text_area("Enter the message")
+st.title("SMSecure - SMS Spam Classifier") # titolo
+
+input_sms = st.text_area("Enter the message") # input
 
 if not input_sms:
-    st.warning("Please enter a message.")
+    st.warning("Please enter a message.") # messaggio visualizzato con text area vuota
 else:
     if st.button('Predict', key='prediction_button', help='Click to predict'):
         # calcolo numero words e numero caratteri
@@ -71,7 +74,7 @@ else:
         features = [[num_words, num_characters]]
         normalized_features = scaler.fit_transform(features)
 
-        # trasformo il testo (stemming, riduzione a maiuscolo ecc.)
+        # trasformo il testo con la funzione definita in alto
         transformed_sms = transform_text(input_sms)
 
         # cerco corrispondenze con parole spam
@@ -99,11 +102,11 @@ else:
             if parole_Hamchiave_trovate:
                 st.write("Parole chiave ham trovate:", ", ".join(parole_Hamchiave_trovate))
 
-        # Aggiungi la predizione alla lista di storico
+        # Aggiungi la predizione alla history
         st.session_state.predictions_history.append({"Message": input_sms, "Prediction": "Spam" if result == 1 else "Ham"})
 
 
-st.markdown("---")
+st.markdown("---") # linea di divisione grafica
 
 # Mostra la tabella delle predizioni passate
 st.title("Predictions History")
