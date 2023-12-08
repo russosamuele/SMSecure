@@ -10,9 +10,10 @@ All'interno della repository ci sono due file in particolare:
 - SMSecure.ipynb, che è il notebook usato per l'intero processo di sviluppo.
 - sms_dataset.csv, che è il dataset utilizzato per la costruzione del modello.
 
-Sono presenti inoltre due cartelle (una dedicata allo sviluppo dell'app, una alla documentazione):
+Sono presenti inoltre tre cartelle (una dedicata allo sviluppo dell'app, una alla documentazione):
 - App, che contiene gli export (modello, vectorizer, frequenze parole ham/spam) dal notebook, nonchè il file app.py, che è la vera e propria app che consentirà di inserire dei messaggi e di classificarne il tipo.
-- Documentazione: contiene l'export sorgente di tutta la documentazione scritta in latex, nonchè l'export in pdf.
+- Documentazione: contiene l'export sorgente di tutta la documentazione scritta in latex.
+- Presentazione: contiene la demo (SMSecure_Demo.mov), la presentazione e la documentazione esportate in pdf.
 
 
 # Replicare il progetto
