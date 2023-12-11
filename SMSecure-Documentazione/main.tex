@@ -15,7 +15,8 @@
 
 
 \title{SMSecure - Documentazione}
-\author{Samuele Russo   matr.0512113317}
+\author{Samuele Russo\\matr.  0512113317}
+\date{} % Rimuove la data
 
 
 \begin{document}
@@ -29,13 +30,13 @@
 
 \section{Introduzione}
 
-    L'aumento esponenziale dell'utilizzo di dispositivi mobili ha reso gli SMS uno dei principali canali di comunicazione. Tuttavia, insieme a questa crescita, si è verificato un forte incremento del numero di spam SMS; ovvero messaggi caratterizzati da contenuti promozionali non richiesti, pubblicità ingannevoli o addirittura truffe; compromettendo l'efficienza e la sicurezza delle comunicazioni personali e professionali.\\
-    Tutto il codice, il modello, la presentazione nonchè tale documentazione, si possono trovare presso tale repository \href{https://github.com/russosamuele/SMSecure.git}{GitHub}
+    L'aumento esponenziale dell'utilizzo di dispositivi mobili ha reso gli SMS uno dei principali canali di comunicazione. Tuttavia, insieme a questa crescita, si è verificato un forte incremento del numero di SMS spam; ovvero messaggi caratterizzati da contenuti promozionali non richiesti, pubblicità ingannevoli o addirittura truffe; compromettendo l'efficienza e la sicurezza delle comunicazioni personali e professionali.\\
+    NB: Tutto il codice,  l'implementazione dell'app, la presentazione nonchè tale documentazione, si possono trovare presso tale repository \href{https://github.com/russosamuele/SMSecure.git}{GitHub}
 
 
     \subsection{Obiettivi}
 
-        Tale progetto di Fondamenti di Intelligenza Artificiale, il mio primo approccio in questo ambito, si propone di sviluppare un filtro anti-spam sms per migliorare l'esperienza degli utenti nel gestire i propri messaggi. Ho scelto tale tematica perchè relativamente semplice, e quindi in grado di farmi apprendere il più possibile le basi del Machine Learning.
+        Tale progetto di Fondamenti di Intelligenza Artificiale, il mio primo approccio in questo ambito, si propone di sviluppare un filtro anti-spam sms per migliorare l'esperienza degli utenti nel gestire i propri messaggi. Ho scelto tale tematica perchè relativamente semplice, e quindi in grado di farmi apprendere il più possibile le basi del Machine Learning. Inoltre la tematica è anche molto affrontata, dato che oggigiorno è frequente imbattersi in contenuti spam, sia tramite SMS, che email.
 
         Gli obiettivi principali includono:
         \begin{itemize}
@@ -64,7 +65,7 @@
             \end{itemize}
 
         \subsection{Analisi del problema}
-            Quindi in poche parole SMSecure mira a costruire un filtro anti-spam sms, si tratta quindi di un problema di Machine Learning, più nello specifico di un problema di apprendimento supervisionato, nonchè di classificazione. Nelle successive sezioni vado a descrivere tutte le problematiche che ho affrontato: dalla scelta dei dati, fino al deploy del modello.\\
+            Quindi in poche parole SMSecure mira a costruire un filtro anti-spam sms, si tratta quindi di un problema di apprendimento supervisionato, più nel dettaglio di \textbf{classificazione}. Nelle successive sezioni vado a descrivere tutte le problematiche che ho affrontato: dalla scelta dei dati, fino al deploy del modello.\\
             Per quanto riguarda le tecnologie che ho utilizzato per lo sviluppo del progetto, abbiamo:
             \begin{itemize}
                 \item Python (in dettaglio le librerie per ML, come sickitLearn, Pandas,  ecc.),
@@ -94,7 +95,7 @@
         Il dataset in esame "SMS Spam Collection" è un insieme di messaggi SMS etichettati. Comprende 5.574 messaggi in inglese, suddivisi tra "ham" (legittimi) e "spam". Ogni messaggio è rappresentato da una riga con due colonne: una contiene l'etichetta (ham o spam) ed una contiene il testo grezzo dell'SMS. In questa fase vado ad analizzare, o meglio esplorare più nel dettaglio i dati per comprenderli e per scoprire informazioni rilevanti, tendenze, o relazioni. \\
         Quindi sono andato a fare una prima panoramica del dataset, andando a conteggiare quanti sample per ogni classe (ham/spam) fossero presenti, i nomi delle colonne, per poi passare alla vera esplorazione dei dati, volta quindi a trovare informazioni maggiormente rilevanti.\\
         Per un messaggio di testo è molto interessante andare ad osservare la sua lunghezza, il numero di parole al suo interno ed anche il numero di frasi. Non disponendo di tali feature sono andato a ricavarle, andando ad anticipare la \textbf{feature construction} della fase di Data Preparation.\\
-        Per andare a ricavare queste feature dal testo ho utilizzato delle funzioni disponibili nella libreria nltk (conteggio parole e frasi), nonchè la funzione len() per calcolare il numero di caratteri. \\
+        Per andare a ricavare queste feature dal testo ho utilizzato funzioni già disponibili implementate nella libreria nltk (conteggio parole e frasi), nonchè la funzione len() per calcolare il numero di caratteri. \\
         Per visualizzare eventuali trend e relazioni tra le varie feature, ho utilizzato alcuni grafici del libreria seaborn. Iniziamo ad analizzare i risultati ottenuti, partendo dal numero di caratteri.
 
         \begin{figure}[H]
@@ -233,7 +234,7 @@
         Quindi dopo aver definito tale funzione, ho semplicemente processato tutto il testo degli SMS per poi inserirlo in una nuova colonna del dataset.
 
     \subsection{Feature Scaling}
-        In questa fase si vanno ad utilizzare delle tecniche per normalizzare o scalare i valori delle caratteristiche in modo da avere una scala uniforme. Questo serve per evitare che caratteristiche con scale molto diverse influenzino negativamente gli algoritmi di apprendimento. Nel mio caso ho notato che le scale fra il numero di caratteri, numero di parole e numero di frasi sono molto differenti; difatti i caratteri arrivano anche a oltre 180, il numero di parole non supera nella maggiorparte dei casi 50, ed infine il numero frasi non supera le 10. Quindi ho ritenuto opportuno andare a normalizzare tali valori, e per farlo ho usato una funzione della libreria sklearn.
+        In questa fase si vanno ad utilizzare delle tecniche per normalizzare o scalare i valori delle caratteristiche in modo da avere una scala uniforme. Questo serve per evitare che caratteristiche con scale molto diverse influenzino negativamente gli algoritmi di apprendimento. Nel mio caso ho notato che le scale fra il numero di caratteri, numero di parole e numero di frasi sono molto differenti; difatti i caratteri arrivano anche a oltre 180, il numero di parole non supera nella maggiorparte dei casi 50, ed infine il numero frasi è decisamente molto minore. Quindi ho ritenuto opportuno andare a normalizzare tali valori, e per farlo ho usato una funzione della libreria sklearn.
         \begin{verbatim}
             #colonne che voglio normalizzare
             features_to_normalize = ['num_characters', 'num_words', 'num_sentences']
@@ -260,7 +261,7 @@
                 \item Aumentare le istanze della classe spam
             \end{itemize}
             Tra le due, per evitare troppa duplicazione e quindi probabile overfitting, ho deciso di optare per la prima opzione, andando a considerare l'uso dell' \textbf{undersampling con clustering}, per evitare appunto di eliminare istanze particolarmente rilevanti per l'apprendimento.\\
-            Per quanto riguarda l'algoritmo di clustering da utilizzare ho optato per il k-means, l'algoritmo a partizionamento iterativo più diffuso, per principalmente due motivi: la forma della distribuzione dei dati, e la presenza di pochi outlier, che in parte ho deciso di eliminare. Per individuare ed eliminare gli outlier ho calcolato media e deviazione standard, per poi eliminare tutte le istanze che distano 4 deviazioni standard dalle media.\\
+            Per quanto riguarda l'algoritmo di clustering \cite{KMeansClustering} da utilizzare ho optato per il \textbf{k-means}, l'algoritmo a partizionamento iterativo più diffuso, per principalmente due motivi: la forma della distribuzione dei dati, e la presenza di pochi outlier, che in parte ho deciso di eliminare. Per individuare ed eliminare gli outlier ho calcolato media e deviazione standard, per poi eliminare tutte le istanze che distano 4 deviazioni standard dalle media.\\
             Per la configurazione del k-means c'è un parametro di vitale importanza: k, ovvero il numero di cluster da generare. Non sapendo che valore assegnare a tale parametro ho optato nella valutazione di due tecniche:
             \begin{itemize}
                 \item Elbow Point
@@ -288,13 +289,13 @@
             \subsubsection{Scelta del k}
                 Quindi ho ottenuto valori discordanti dalle due metodologie usate:
                 \begin{itemize}
-                    \item Elbow Point: k=3 o k=4
+                    \item Elbow Point: k=4 o k=5
                     \item Silhouette score: k=2
                 \end{itemize}
-                Quindi per andare a decidere il valore da assegnare a k, ho eseguito tutti i passi successivi (modeling, evaluation) per k=2, 3, 4. Ho osservato  risultati migliori per k=2.\\
+                Quindi per andare a decidere il valore da assegnare a k, ho eseguito tutti i passi successivi (modeling, evaluation) per k=2, 4, 5. Dopo ciò posso dire di aver osservato  risultati migliori per k=2.\\
 
             \subsubsection{Clustering con k=2}
-                Una volta individuato il miglior valore per k sono andato ad eseguire in maniera definitiva il clustering.
+                Una volta individuato il miglior valore per k sono andato ad eseguire in maniera definitiva il clustering. P.S. Tale rappresentazione è fatta usando numero di parole e numero di caratteri, ma potrebbe essere anche fatta usando altre feature.
                 \begin{figure}[H]
                     \centering
                     \includegraphics[width=0.9\linewidth]{images/clust.png}
@@ -315,7 +316,7 @@
 
 
         \subsection{Rappresentazione Numerica dei Dati Testuali}
-            Prima di procedere con la fase di modeling, sono necessarie alcuni passaggi finali, tra questi: trasformazione dei dati in rappresentazione numerica e split del dataset. La ragione della prima operazione risiede nel fatto che la maggior parte degli algoritmi di apprendimento richiede in input dati in formato numerico.\\
+            Prima di procedere con la fase di modeling, sono necessari alcuni passaggi finali, tra questi: trasformazione dei dati in rappresentazione numerica e split del dataset. La ragione della prima operazione risiede nel fatto che la maggior parte degli algoritmi di apprendimento richiede in input dati in formato numerico.\\
             Usando il TfidfVectorizer ho trasformato i dati testuali in una rappresentazione numerica, successivamente ho combinato l'output di tale operazione con le feature già numeriche (numero parole, numero caratteri), per poi procedere, allo split del dataset.
 
         \subsection{Split del Dataset}
@@ -336,10 +337,10 @@
                     \item Alberi Decisionali (DTC)
                 \end{itemize}
                 Questi sono due algoritmi che operano in maniera differente per arrivare alla classificazione: infatti il primo considera le caratteristiche della nuova istanza da classificare e calcola la probabilità che queste facciano parte di una classe tramite l’applicazione del teorema di Bayes, mentre il secondo mira a creare un albero i cui nodi rappresentano un sotto-insieme di caratteristiche del problema e i cui archi rappresentano delle decisioni; il tutto sfruttando i concetti di Entropia e Information-Gain utili per andare a suddividere l'insieme di partenza.\\
-                In linea generale, gli Alberi Decisionali sono noti per la loro flessibilità nel catturare relazioni complesse nei dati, mentre il classificatore Naive Bayes eccelle per la sua velocità di addestramento, efficacia nei dati testuali. Poiché non sono un esperto di algoritmi e non posso prevedere quale si adatti meglio al mio problema, ho adottato la valutazione empirica:  ovvero l'addestramento del modello prima con un Naive Bayes e successivamente con Decision Tree, per poi valutare e confrontare i risultati ottenuti. In questo modo riesco a determinare quale algoritmo si comporta meglio rispetto ai miei obiettivi e procedere quindi all'export.
+                In linea generale, gli Alberi Decisionali sono noti per la loro flessibilità nel catturare relazioni complesse nei dati, mentre il classificatore Naive Bayes eccelle per la sua velocità di addestramento, efficacia nei dati testuali. Poiché non sono un esperto di algoritmi e non posso prevedere quale si adatti meglio al mio problema, ho adottato la valutazione empirica:  ovvero l'addestramento del modello prima con un Naive Bayes e successivamente con Decision Tree, per poi valutare e confrontare i risultati ottenuti. In questo modo riesco a determinare quale algoritmo si comporta meglio rispetto al mio problema e ad i miei obiettivi.
 
             \subsection{Addestramento}
-                In questa sezione procedo ad addestrare il modello in base all'algoritmo scelto in precedenza. Nel mio caso, come già detto,  procedo prima all'addestramento usando Naive Bayes, per poi fare lo stesso con Decision Tree. Infine valuterò le prestazioni ottenute e le metterò a confronto. Tutto ciò mi consentirà di capire quale algoritmo si adatta meglio ai dati, e va di conseguenza a fare delle predizioni migliori.\\
+                In questa sezione procedo ad addestrare il modello in base all'algoritmo scelto in precedenza. Nel mio caso, come già detto,  procedo prima all'addestramento usando Naive Bayes, per poi fare lo stesso con Decision Tree. Infine valuterò le prestazioni ottenute e le metterò a confronto. Tutto ciò mi consentirà di capire quale algoritmo si adatta meglio al problema, e va di conseguenza a fare delle predizioni migliori.\\
 
                 \subsubsection{Naive Bayes}
                     L'algoritmo Naive Bayes \cite{wikiNaiveBayes} è un algoritmo di classificazione basato sul teorema di Bayes, che riguarda la probabilità condizionata. Si parla di  "naive" perchè tale algortimo considera l'indipendenza tra le caratteristiche, ciò semplifica i calcoli e rende l'algoritmo veloce. Ci sono diverse varianti del Naive Bayes, tra cui:
@@ -369,7 +370,7 @@
                         \item La \textbf{Precisione} rappresenta la proporzione di messaggi classificati come spam che sono effettivamente spam. Un valore elevato indica che il modello ha pochi falsi positivi, cioè pochi messaggi ham erroneamente classificati come spam.
                         \item L'\textbf{accuratezza} rappresenta la proporzione di tutte le previsioni corrette (veri positivi e veri negativi) rispetto a tutte le previsioni fatte dal modello. Tale indicatore, come visto a lezione, può essere influenzato dallo sbilanciamento dei dati; non è questo il caso dato che ho provveduto precedentemente a bilanciare i dati.
                     \end{itemize}
-                    Da come emerge dai valori ottenuti, il classificatore Naive Bayes MNB ha ottenuto ottimi risultati su tutte le metriche. Una particolarità osservabile è che il Naive Bayes BNB ha ottenuto una precisione molto alta, a sfavore di una recall piuttosto bassa rispetto gli altri. Dal mio punto di vista è meglio avere una recall il più alta possibile, difatti preferirei che qualche messaggio ham venga erroneamente classificato rispetto al ricevere fastidiosi sms spam. Quindi tra i tre preliligo il classificatore MNB.
+                    Da come emerge dai valori ottenuti, il classificatore Naive Bayes MNB ha ottenuto ottimi risultati su tutte le metriche. Una particolarità osservabile è che il Naive Bayes BNB ha ottenuto una precisione molto alta, a sfavore di una recall piuttosto bassa rispetto gli altri. Dal mio punto di vista è meglio avere una recall il più alta possibile, difatti preferirei che qualche messaggio ham venga classificato erroneamente rispetto al ricevere fastidiosi sms spam. Quindi tra i tre prediligo il classificatore MNB.
                     Andiamo ora ad addestrare il modello usando il Decision Tree.
 
                 \subsubsection{Decision Tree}
@@ -386,6 +387,7 @@
                     È da notare che l'algoritmo DTC ha un importante parametro: maxDepth, ovvero il numero massimo di livelli creati per l'albero. Per trovare la profondità massima ottimale ho rieseguito l'algoritmo più volte, andando a variare il parametro. Ho osservato che le performance in termini di precisione/accuratezza/recall sono aumentate fino ad una profondità pari ad 8, per poi andare in stallo o peggiorare.
 
                     \subsubsection{MNB vs DTC}
+                        Visualizziamo e confrontiamo i risultati del Naive Bayes MNB e del DTC.
 
                         \begin{figure}[H]
                             \centering
